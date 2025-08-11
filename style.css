@@ -45,26 +45,15 @@ main{padding:70px 20px 80px}
   color:#d4fff1; text-shadow:0 0 12px color-mix(in oklab, var(--accent) 40%, transparent);
   white-space:pre-wrap;
 }
-/* Markup-based glitch layers */
-.glitch__base{ position:relative; z-index:1; display:block; }
-.glitch__top,.glitch__bottom{
-  position:absolute; inset:0; pointer-events:none; z-index:2;
-  white-space:inherit; will-change:clip-path, transform;
-}
-.glitch__top{
-  transform:translateX(-2px); text-shadow:-2px 0 var(--accent3);
-  clip-path:inset(0 0 0 0); animation:gl1 2.2s infinite linear alternate;
-}
-.glitch__bottom{
-  transform:translateX(2px); text-shadow:2px 0 var(--accent2);
-  clip-path:inset(0 0 0 0); animation:gl2 1.8s infinite linear alternate;
-}
-.glitch::before,
+/* Pseudo-element glitch effect */
 .glitch::before,
 .glitch::after{
-  content:none !important;
-  display:none !important;
+  content: var(--glitch, attr(data-text));
+  position:absolute; inset:0; pointer-events:none;
+  white-space:inherit;
 }
+.glitch::before{ left:2px; text-shadow:-2px 0 var(--accent3); clip-path:inset(0 0 0 0); animation:gl1 2.2s infinite linear alternate; }
+.glitch::after{ left:-2px; text-shadow:2px 0 var(--accent2); clip-path:inset(0 0 0 0); animation:gl2 1.8s infinite linear alternate; }
 @keyframes gl1{
   0%{clip-path:inset(0 0 80% 0)}
   50%{clip-path:inset(10% 0 20% 0)}
@@ -143,7 +132,6 @@ main{padding:70px 20px 80px}
 /* Accessibility */
 @media (prefers-reduced-motion: reduce){
   .glitch::before,.glitch::after{animation:none}
-  .glitch__top,.glitch__bottom{animation:none}
   #matrix{display:none}
   .fx{background:none}
 }
