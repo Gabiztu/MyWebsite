@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="en" data-theme="neon">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Uplink // Ultimate Portfolio</title>
+  <meta name="color-scheme" content="dark">
+  <style>
+    :root{
+      --bg:#05070a; --bg2:#0b1220; --fg:#e6fff3; --muted:#9fb2a8;
+      --accent:#00ff9c; --accent2:#00e5ff; --accent3:#ff00e6;
+      --term:#081116; --grid:#0a1016; --border:rgba(255,255,255,0.08);
+      --ok:#8cffbf; --warn:#ffc267; --err:#ff6b6b;
+    }
+    [data-theme="matrix"]{
+      --bg:#030a06; --bg2:#07120c; --fg:#d5ffe9; --muted:#8bbf9f;
+      --accent:#00ff66; --accent2:#00d97c; --accent3:#1aff99;
+    }
+    [data-theme="amber"]{
+      --bg:#0c0905; --bg2:#130f09; --fg:#fff4dc; --muted:#d9c5a3;
+      --accent:#ffb300; --accent2:#ffd166; --accent3:#ff8c00;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:radial-gradient(1200px 800px at 20% 10%, var(--bg2) 0%, var(--bg) 55%, #020406 100%);
+      color:var(--fg); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing:.3px; overflow-x:hidden; cursor:crosshair;
+    }
+    /* Matrix canvas + CRT */
+    #matrix{position:fixed; inset:0; z-index:-3}
+    .fx{
+      pointer-events:none; position:fixed; inset:0; z-index:-2;
+      background:
+        radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.45) 100%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 2px, transparent 3px);
+      mix-blend-mode:overlay;
+    }
+    header{
+      position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between;
+      padding:16px 22px; background:linear-gradient(to bottom, rgba(5,7,10,.85), rgba(5,7,10,0));
+      border-bottom:1px solid var(--border); backdrop-filter:saturate(130%) blur(6px);
+    }
+    .brand{color:var(--accent); font-weight:700; letter-spacing:1px; user-select:none; cursor:alias}
+    .nav a{color:var(--muted); text-decoration:none; margin-left:16px}
+    .nav a:hover{color:var(--fg)}
+    main{padding:70px 20px 80px}
+    .hero{max-width:1100px; margin:0 auto 50px auto}
+    .badge{display:inline-flex; gap:8px; align-items:center; color:var(--muted); font-size:12px; border:1px solid var(--border);
+      padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.03)}
+    .glitch{
+      position:relative; font-size:clamp(34px, 5.6vw, 86px); line-height:1.06; margin:16px 0 10px; text-transform:uppercase;
+      color:#d4fff1; text-shadow:0 0 12px color-mix(in oklab, var(--accent) 40%, transparent);
+    }
+    .glitch::before,.glitch::after{content:attr(data-text); position:absolute; inset:0; pointer-events:none}
+    .glitch::before{left:2px; text-shadow:-2px 0 var(--accent3); clip-path:inset(0 0 0 0); animation:gl1 2.2s infinite linear alternate}
+    .glitch::after{left:-2px; text-shadow:2px 0 var(--accent2); clip-path:inset(0 0 0 0); animation:gl2 1.8s infinite linear alternate}
+    @keyframes gl1{0%{clip-path:inset(0 0 80% 0)}50%{clip-path:inset(10% 0 20% 0)}100%{clip-path:inset(85% 0 0 0)}}
+    @keyframes gl2{0%{clip-path:inset(80% 0 0 0)}50%{clip-path:inset(40% 0 30% 0)}100%{clip-path:inset(0 0 90% 0)}}
+    .sub{color:var(--muted); font-size:clamp(14px, 1.8vw, 18px); max-width:720px}
+    .typed{color:var(--accent)}
+    .ctas{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
+    .btn{
+      --b: color-mix(in oklab, var(--accent) 50%, transparent);
+      color:var(--fg); background:rgba(0,0,0,.3); border:1px solid var(--b); padding:11px 16px; border-radius:10px;
+      text-decoration:none; display:inline-flex; align-items:center; gap:10px; transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow:0 0 0 0 color-mix(in oklab, var(--accent) 0%, transparent);
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 0 24px -8px color-mix(in oklab, var(--accent) 65%, transparent); border-color:color-mix(in oklab, var(--accent) 70%, transparent)}
+    .btn.alt{--b:color-mix(in oklab, var(--accent2) 50%, transparent)}
+    /* Terminal */
+    .terminal{max-width:1100px; margin:18px auto 40px auto; border:1px solid var(--border); border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      overflow:hidden; box-shadow:0 10px 50px rgba(0,0,0,.4)}
+    .term-top{display:flex; gap:8px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--border); background:linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,0))}
+    .dot{width:10px;height:10px;border-radius:999px}.d1{background:#ff5f57}.d2{background:#febb2e}.d3{background:#28c840}
+    .term-body{background:var(--term); font-size:14px; padding:14px; color:#b9d6c8; min-height:200px; max-height:360px; overflow:auto}
+    .line{white-space:pre-wrap; word-break:break-word}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+    .prompt{color:var(--ok)}
+    .term-input{display:flex; align-items:center; gap:8px; padding:10px 14px; border-top:1px solid var(--border); background:linear-gradient(to top, rgba(255,255,255,.04), rgba(255,255,255,0))}
+    #cmd{flex:1; background:transparent; color:var(--fg); border:0; outline:none; font:inherit}
+    .caret{display:inline-block; width:8px; background:var(--accent); margin-left:3px; animation:blink .9s step-end infinite}
+    @keyframes blink{50%{opacity:0}}
+    /* Work grid */
+    .section{max-width:1100px; margin:0 auto; padding:20px 0}
+    .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px}
+    .card{
+      position:relative; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--border); border-radius:14px; padding:16px; perspective:800px; transform-style:preserve-3d;
+      transition:box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover{box-shadow:0 26px 60px rgba(0,0,0,.35); border-color:color-mix(in oklab, var(--accent) 50%, transparent)}
+    .card .title{font-weight:700; color:var(--fg)}
+    .card .meta{color:var(--muted); font-size:12px}
+    .shine{position:absolute; inset:0; border-radius:inherit; background:radial-gradient(600px 300px at var(--mx,50%) var(--my,50%), color-mix(in oklab, var(--accent) 14%, transparent), transparent 55%); opacity:0; transition:opacity .2s}
+    .card:hover .shine{opacity:1}
+    /* Palette */
+    .palette{position:fixed; inset:0; display:none; place-items:center; z-index:20; background:rgba(0,0,0,.5); backdrop-filter:blur(6px)}
+    .palette[aria-hidden="false"]{display:grid}
+    .pal-body{width:min(720px,96vw); background:var(--term); border:1px solid var(--border); border-radius:12px; overflow:hidden}
+    .pal-top{display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid var(--border)}
+    .pal-input{flex:1; background:transparent; border:0; outline:none; font:inherit; color:var(--fg)}
+    .pal-list{max-height:300px; overflow:auto}
+    .pal-item{padding:10px 14px; border-top:1px solid var(--border); cursor:pointer; display:flex; justify-content:space-between}
+    .pal-item[aria-selected="true"]{background:rgba(255,255,255,.06)}
+    /* Modal */
+    .modal{position:fixed; inset:0; display:none; place-items:center; z-index:22; background:rgba(0,0,0,.6); backdrop-filter:blur(8px)}
+    .modal[aria-hidden="false"]{display:grid}
+    .modal-body{width:min(820px,96vw); background:var(--term); border:1px solid var(--border); border-radius:12px; padding:18px}
+    .modal-body h3{margin:0 0 6px 0}
+    .close{float:right; cursor:pointer; color:var(--muted)}
+    /* Toast */
+    .toast{position:fixed; bottom:18px; right:18px; z-index:30; background:var(--term); color:var(--fg); border:1px solid var(--border); border-radius:10px; padding:10px 14px; display:none}
+    .toast.show{display:block}
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce){
+      .glitch::before,.glitch::after{animation:none}
+      #matrix{display:none}
+      .fx{background:none}
+    }
+    @media (max-width:720px){ .nav{display:none} }
+  </style>
+</head>
+<body>
+  <canvas id="matrix" aria-hidden="true"></canvas>
+  <div class="fx" aria-hidden="true"></div>
+
+  <header>
+    <div class="brand" id="brand">>_ UPLINK // YOUR NAME</div>
+    <nav class="nav">
+      <a href="#work">work</a>
+      <a href="#about">about</a>
+      <a href="#contact">contact</a>
+      <a href="#" id="motionToggle" title="Toggle motion">motion</a>
+      <a href="#" id="soundToggle" title="Toggle sound">sound</a>
+      <a href="#" id="themeToggle" title="Toggle theme">theme</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <span class="badge">SYSTEM STATUS • ONLINE</span>
+      <h1 class="glitch" data-text="ACCESS GRANTED. IMPOSSIBLE-LOOKING WEBSITES, REAL RESULTS.">ACCESS GRANTED. IMPOSSIBLE-LOOKING WEBSITES, REAL RESULTS.</h1>
+      <p class="sub"><span class="typed" id="typed"></span></p>
+      <div class="ctas">
+        <a class="btn" href="#work">🚀 See projects</a>
+        <a class="btn alt" href="#contact">💼 Hire me</a>
+      </div>
+
+      <!-- Interactive Terminal -->
+      <div class="terminal" id="terminal">
+        <div class="term-top"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span></div>
+        <div class="term-body" id="termOut" role="log" aria-live="polite">
+          <div class="line">Booting uplink...</div>
+          <div class="line">Loaded modules: ui, net, fs, viz, stealth ✔</div>
+          <div class="line">Type <span class="ok">help</span> to begin. Press <span class="ok">Ctrl/Cmd + K</span> for command palette.</div>
+        </div>
+        <div class="term-input">
+          <span class="prompt"><span id="who">guest</span>@portfolio:<span id="cwd">~</span>$</span>
+          <input id="cmd" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command">
+          <span class="caret">&nbsp;</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="section">
+      <h2>Projects</h2>
+      <div class="grid" id="grid">
+        <div class="card" data-project="hyperviz">
+          <div class="shine"></div>
+          <div class="title">HYPERVIZ 3D</div>
+          <div class="meta">WebGL • Shader systems • 60fps dashboards</div>
+        </div>
+        <div class="card" data-project="fintech-core">
+          <div class="shine"></div>
+          <div class="title">FINTECH CORE</div>
+          <div class="meta">Payments engine • Audit-grade UX • Realtime</div>
+        </div>
+        <div class="card" data-project="realtime-dashboard">
+          <div class="shine"></div>
+          <div class="title">REALTIME DASHBOARD</div>
+          <div class="meta">Streams • Animations • Zero-lag</div>
+        </div>
+        <div class="card" data-project="ml-playground">
+          <div class="shine"></div>
+          <div class="title">ML PLAYGROUND</div>
+          <div class="meta">Interactive demos • Model visualizations</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <h2>About</h2>
+      <p>I design and build cinematic interfaces: WebGL, 3D, motion systems, and performance-first frontends that convert. Available for select projects.</p>
+    </section>
+
+    <section id="contact" class="section">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:your@email.com">your@email.com</a></p>
+      <p>Calendar: <a href="#" onclick="alert('Wire your scheduler here.');return false;">Schedule a call</a></p>
+    </section>
+  </main>
+
+  <!-- Command Palette -->
+  <div class="palette" id="palette" aria-hidden="true">
+    <div class="pal-body">
+      <div class="pal-top">
+        <span>⌘K</span>
+        <input class="pal-input" id="palInput" placeholder="Run a command...">
+      </div>
+      <div class="pal-list" id="palList"></div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-body">
+      <span class="close" id="modalClose">✕</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">GODMODE engaged.</div>
+
+<script>
+/* ===== Globals / State ===== */
+const out = document.getElementById('termOut');
+const input = document.getElementById('cmd');
+const whoEl = document.getElementById('who');
+const cwdEl = document.getElementById('cwd');
+const canvas = document.getElementById('matrix');
+const brand = document.getElementById('brand');
+const motionToggle = document.getElementById('motionToggle');
+const soundToggle = document.getElementById('soundToggle');
+const themeToggle = document.getElementById('themeToggle');
+const palette = document.getElementById('palette');
+const palInput = document.getElementById('palInput');
+const palList = document.getElementById('palList');
+const modal = document.getElementById('modal');
+const modalClose = document.getElementById('modalClose');
+const modalContent = document.getElementById('modalContent');
+const toast = document.getElementById('toast');
+
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+const state = {
+  user: 'guest',
+  root: false,
+  path: '/home/guest',
+  history: [],
+  histIndex: -1,
+  awaitingPassword: false,
+  pendingSudo: null,
+  tries: 0,
+  sound: false,
+  motion: !prefersReduced.matches,
+  theme: document.documentElement.getAttribute('data-theme') || 'neon',
+  konamiIdx: 0,
+};
+
+/* ===== Audio (tiny beep) ===== */
+let audioCtx = null;
+function beep(freq=420, dur=0.05, vol=0.03){
+  if(!state.sound) return;
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.value = freq;
+    o.type = 'square';
+    g.gain.value = vol;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + dur);
+  }catch(e){}
+}
+
+/* ===== Matrix Rain ===== */
+let ctx, w, h, columns, drops, rafId;
+function startMatrix(){
+  if(!state.motion) return;
+  if(!canvas.getContext) return;
+  ctx = canvas.getContext('2d');
+  resize();
+  if(rafId) cancelAnimationFrame(rafId);
+  loop();
+}
+function resize(){
+  w = canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+  h = canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+  columns = Math.floor(w / (14 * devicePixelRatio));
+  drops = Array(columns).fill(0);
+  ctx.font = `${14*devicePixelRatio}px ui-monospace, monospace`;
+}
+const glyphs = 'ｱｲｳｴｵｶｷ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&<>/\\';
+function loop(){
+  ctx.fillStyle = 'rgba(5,7,10,0.08)';
+  ctx.fillRect(0,0,w,h);
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0f0';
+  for(let i=0;i<drops.length;i++){
+    const x = i * 14 * devicePixelRatio;
+    const y = drops[i] * 18 * devicePixelRatio;
+    const char = glyphs[Math.floor(Math.random()*glyphs.length)];
+    ctx.fillText(char, x, y);
+    if(y > h && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+  rafId = requestAnimationFrame(loop);
+}
+function stopMatrix(){
+  if(rafId) cancelAnimationFrame(rafId);
+  canvas.getContext?.('2d')?.clearRect(0,0,w,h);
+}
+
+/* ===== Typed hero ===== */
+const typedMsgs = [
+  'Deploying unreal interfaces. Shipping real business results.',
+  'WebGL, 3D, motion systems — with performance and a plan.',
+  'Hidden features included. Type “help -a” in the terminal.'
+];
+const typedEl = document.getElementById('typed');
+let ti=0, tj=0, del=false, pause=0;
+function typeLoop(){
+  const current = typedMsgs[ti];
+  if(!del){
+    typedEl.textContent = current.slice(0, tj++) + '▌';
+    if(tj > current.length){ del=true; pause=20; }
+  }else{
+    if(pause>0) pause--;
+    else{
+      typedEl.textContent = current.slice(0, tj--) + '▌';
+      if(tj === 0){ del=false; ti=(ti+1)%typedMsgs.length; }
+    }
+  }
+  setTimeout(typeLoop, del ? 18 : 24);
+}
+
+/* ===== Filesystem (toy) ===== */
+const FS = {
+  '/': {type:'dir', children:['home','projects','about','readme.txt','etc']},
+  '/home': {type:'dir', children:['guest']},
+  '/home/guest': {type:'dir', children:['notes.txt','resume.txt','contacts.url']},
+  '/projects': {type:'dir', children:['hyperviz','fintech-core','realtime-dashboard','ml-playground']},
+  '/projects/hyperviz': {type:'dir', children:['case.md','stack.txt','open.url']},
+  '/projects/fintech-core': {type:'dir', children:['case.md','stack.txt','open.url']},
+  '/projects/realtime-dashboard': {type:'dir', children:['case.md','stack.txt','open.url']},
+  '/projects/ml-playground': {type:'dir', children:['case.md','stack.txt','open.url']},
+  '/about': {type:'dir', children:['skills.txt','toolchain.txt']},
+  '/etc': {type:'dir', children:['motd','hosts','shadow'], hidden:true},
+  '/vault': {type:'dir', children:['secrets.txt','keys.gpg','flag.txt'], hidden:true, restricted:true},
+
+  '/readme.txt': {type:'file', content:`Welcome to the uplink.
+- Try: help, ls, cd projects, open hyperviz
+- Try: scan portfolio.dev
+- Hidden: help -a, sudo -s, godmode`},
+  '/home/guest/notes.txt': {type:'file', content:`Notes
+- Motion-safe by default.
+- Command palette on Ctrl/Cmd+K.
+- Color themes: neon, matrix, amber.`},
+  '/home/guest/resume.txt': {type:'file', content:`Resume
+Role: Frontend/Creative Engineer
+Focus: WebGL, motion systems, high-performance UX
+Stack: JS/TS, Three.js, GSAP/Framer, WebAudio, GLSL
+Impact: +30–120% conversion lifts across projects`},
+  '/home/guest/contacts.url': {type:'file', content:`mailto:your@email.com`},
+  '/about/skills.txt': {type:'file', content:`Skills: WebGL, shaders, real-time data viz, design systems, perf budgets`},
+  '/about/toolchain.txt': {type:'file', content:`Toolchain: Vite/Next/SvelteKit, r3f, Tailwind/vanilla-extract, Vercel, Resend`},
+  '/etc/motd': {type:'file', content:`Authorized access only. All activity logged.`},
+  '/etc/hosts': {type:'file', content:`127.0.0.1 localhost
+0.0.0.0 distraction.net`},
+  '/etc/shadow': {type:'file', content:`guest:*:19876:0:99999:7:::`, restricted:true},
+
+  '/projects/hyperviz/case.md': {type:'file', content:`Hyperviz 3D
+Problem: Static analytics bored decision-makers.
+Solution: WebGL + shaders + streamed data, 60fps.
+Impact: +48% engagement, +19% paid upgrades.`},
+  '/projects/hyperviz/stack.txt': {type:'file', content:`Three.js, WebGL2, Instancing, Sockets, Workers`},
+  '/projects/hyperviz/open.url': {type:'file', content:`https://example.com/hyperviz`},
+
+  '/projects/fintech-core/case.md': {type:'file', content:`Fintech Core
+Problem: Complex payments flows, slow support.
+Solution: Audit-grade flows, realtime recon.
+Impact: -42% handling time, +23 NPS.`},
+  '/projects/fintech-core/stack.txt': {type:'file', content:`React, Statecharts, WebSockets, Post-queue`},
+  '/projects/fintech-core/open.url': {type:'file', content:`https://example.com/fintech`},
+
+  '/projects/realtime-dashboard/case.md': {type:'file', content:`Realtime Dashboard
+Problem: Laggy monitoring.
+Solution: GPU-accelerated charts; backpressure control.
+Impact: 0 dropped frames, 99.99% uptime.`},
+  '/projects/realtime-dashboard/stack.txt': {type:'file', content:`Canvas2D, OffscreenCanvas, SharedArrayBuffer`},
+  '/projects/realtime-dashboard/open.url': {type:'file', content:`https://example.com/realtime`},
+
+  '/projects/ml-playground/case.md': {type:'file', content:`ML Playground
+Problem: Models felt opaque.
+Solution: Interactive visualizations to teach intuition.
+Impact: +63% demo-to-trial.`},
+  '/projects/ml-playground/stack.txt': {type:'file', content:`WebGL, WASM, GPU.js`},
+  '/projects/ml-playground/open.url': {type:'file', content:`https://example.com/ml`},
+
+  '/vault/secrets.txt': {type:'file', content:`FLAG{clients-love-cinematic-perf}`, restricted:true},
+  '/vault/keys.gpg': {type:'file', content:`-----BEGIN PGP MESSAGE----- ***** -----END PGP MESSAGE-----`, restricted:true},
+  '/vault/flag.txt': {type:'file', content:`Hire me → your@email.com`, restricted:true},
+};
+
+/* ===== Utilities ===== */
+function print(line='', cls=''){
+  const div = document.createElement('div');
+  div.className = 'line' + (cls? ' '+cls:'');
+  div.textContent = line;
+  out.appendChild(div);
+  out.scrollTop = out.scrollHeight;
+}
+function printHTML(html){
+  const div = document.createElement('div');
+  div.className = 'line';
+  div.innerHTML = html;
+  out.appendChild(div);
+  out.scrollTop = out.scrollHeight;
+}
+function promptStr(){
+  return `${state.root?'root':'guest'}@portfolio:${displayPath(state.path)}$`;
+}
+function displayPath(p){
+  return p === '/home/guest' ? '~' : p;
+}
+function normalize(path){
+  const parts = path.split('/').filter(Boolean);
+  const stack = [];
+  for(const part of parts){
+    if(part === '.') continue;
+    if(part === '..') stack.pop();
+    else stack.push(part);
+  }
+  return '/'+stack.join('/');
+}
+function resolve(p){
+  if(!p || p.trim()==='') return state.path;
+  if(p.startsWith('/')) return normalize(p);
+  if(p.startsWith('~')) return normalize('/home/guest'+p.slice(1));
+  return normalize(state.path + '/' + p);
+}
+function getNode(p){ return FS[p]; }
+function exists(p){ return !!FS[p]; }
+function isDir(p){ return exists(p) && FS[p].type==='dir'; }
+function isFile(p){ return exists(p) && FS[p].type==='file'; }
+function canAccess(p){
+  const n = getNode(p);
+  if(!n) return false;
+  if(n.restricted && !state.root) return false;
+  return true;
+}
+
+/* ===== Terminal logic ===== */
+function updatePrompt(){
+  whoEl.textContent = state.root? 'root' : 'guest';
+  cwdEl.textContent = displayPath(state.path);
+}
+function unknown(cmd){ print(`command not found: ${cmd}`, 'err'); beep(160, .07, .04); }
+function ls(args){
+  const flags = new Set(args.filter(a=>a.startsWith('-')).join('').split(''));
+  const showAll = flags.has('a');
+  const target = args.filter(a=>!a.startsWith('-'))[0] || '.';
+  const path = resolve(target);
+  if(!exists(path)) return print(`ls: cannot access '${target}': No such file or directory`,'err');
+  if(isFile(path)) return print(target);
+  // directory
+  const {children} = FS[path];
+  const items = children.filter(name=>{
+    const childPath = normalize(path + '/' + name);
+    const node = FS[childPath] || FS[childPath] /* fallback */;
+    const hidden = node?.hidden || (name.startsWith('.') );
+    if(node?.restricted && !state.root) return false;
+    if(hidden && !showAll && !state.root) return false;
+    return true;
+  });
+  print(items.map(i=> (isDir(normalize(path+'/'+i)) ? i+'/' : i)).join('  '));
+}
+function cd(args){
+  const target = args[0];
+  if(!target) return state.path='/home/guest', updatePrompt();
+  const path = resolve(target);
+  if(!exists(path)) return print(`cd: no such file or directory: ${target}`,'err');
+  if(!isDir(path)) return print(`cd: not a directory: ${target}`,'err');
+  if(!canAccess(path)) return print(`cd: permission denied: ${target}`,'err');
+  state.path = path; updatePrompt();
+}
+function pwd(){ print(state.path); }
+function whoami(){ print(state.root?'root':'guest'); }
+function cat(args){
+  if(!args[0]) return print('cat: missing file operand','err');
+  const p = resolve(args[0]);
+  if(!exists(p)) return print(`cat: ${args[0]}: No such file`,'err');
+  if(isDir(p)) return print(`cat: ${args[0]}: Is a directory`,'err');
+  if(!canAccess(p)) return print(`cat: ${args[0]}: Permission denied`,'err');
+  print(getNode(p).content);
+}
+async function clear(){ out.innerHTML=''; }
+async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+async function scan(args){
+  const target = (args[0]||'localhost').replace(/[^a-zA-Z0-9\.\-:]/g,'');
+  print(`Scanning ${target} ...`);
+  const ports = [22,80,443,8080,3000,5000,5432,6379];
+  let open = [];
+  for(let i=0;i<ports.length;i++){
+    await sleep(120 + Math.random()*120);
+    const p = ports[i];
+    const openNow = Math.random() > .35;
+    if(openNow) open.push(p);
+    print(` - port ${p}/${p===22?'ssh':p===80?'http':p===443?'https':'tcp'}: ${openNow?'open':'closed'}`, openNow?'ok':'');
+  }
+  print(`Scan complete: ${open.length} open ports`);
+}
+async function ping(args){
+  const target = args[0]||'127.0.0.1';
+  for(let i=0;i<4;i++){
+    const t = (Math.random()*30+4).toFixed(2);
+    print(`Reply from ${target}: bytes=32 time=${t}ms TTL=58`);
+    await sleep(220);
+  }
+  print(`Ping statistics for ${target}: Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)`);
+}
+function openCmd(args){
+  const name = (args[0]||'').toLowerCase();
+  if(!name) return print('open: missing target','err');
+  // Project open
+  const projPath = `/projects/${name}/open.url`;
+  if(exists(projPath) && canAccess(projPath)){
+    const url = FS[projPath].content.trim();
+    print(`Opening ${name} → ${url}`);
+    window.open(url, '_blank');
+    return;
+  }
+  if(name==='contact'){ location.hash = '#contact'; return }
+  if(name==='projects' || name==='work'){ location.hash = '#work'; return }
+  if(name==='about'){ location.hash = '#about'; return }
+  print(`open: cannot open '${name}'`,'err');
+}
+function theme(args){
+  const t = (args[0]||'').toLowerCase();
+  const allowed = ['neon','matrix','amber'];
+  if(!allowed.includes(t)) return print(`theme: available → ${allowed.join(', ')}`);
+  document.documentElement.setAttribute('data-theme', t);
+  state.theme = t;
+  print(`theme set to ${t}`, 'ok');
+  // kick matrix color change
+  if(state.motion){ stopMatrix(); startMatrix(); }
+}
+function resume(){ cat(['~/resume.txt']); }
+function email(){ print('Opening mail...'); window.location.href='mailto:your@email.com'; }
+function projects(){ location.hash = '#work'; print('Jumped to #work'); }
+async function sudo(args){
+  const subcmd = args.join(' ').trim();
+  if(subcmd==='-s' || subcmd==='su' || subcmd==='--shell'){
+    state.pendingSudo = { escalate:true };
+    return promptPassword();
+  }
+  if(!subcmd){ return print('usage: sudo <command>'); }
+  if(!state.root){
+    state.pendingSudo = {cmd: subcmd};
+    return promptPassword();
+  }else{
+    print(`[sudo] running as root: ${subcmd}`, 'ok');
+    runCommand(subcmd);
+  }
+}
+function promptPassword(){
+  print(`[sudo] password for ${state.user}: ••••••••`);
+  state.awaitingPassword = true;
+  state.tries++;
+}
+function hireme(){ print('Access granted ✔ — sending hiring intent...','ok'); location.hash = '#contact'; }
+
+/* Hidden/Easter commands */
+function godmode(){
+  state.root = true; updatePrompt();
+  showToast('GODMODE engaged.');
+  revealVault();
+}
+function backdoor(){ godmode(); }
+function neo(){ theme(['matrix']); print('There is no spoon.','ok'); }
+function revealVault(){
+  // add vault to root dir if hidden
+  if(!FS['/'].children.includes('vault')){
+    FS['/'].children.push('vault');
+  }
+  print('vault mounted at /vault', 'ok');
+}
+
+/* ===== Command router ===== */
+const router = {
+  help(args){
+    if(args[0]==='-a'){
+      printHTML(`Commands:
+- help, help -a
+- ls [-a] [path], cd [path], pwd, whoami
+- cat <file>, open <target>, clear
+- projects, resume, email
+- scan <host>, ping <host>, theme <neon|matrix|amber>
+- sudo -s, sudo <cmd> (try: sudo hire-me)
+- Hidden: godmode, backdoor, neo, matrix, rain`);
+      return;
+    }
+    printHTML(`Try commands:
+- ls, cd projects, cat readme.txt
+- open hyperviz, scan portfolio.dev, theme matrix
+- sudo -s (enter any pass after 2 tries)`);
+  },
+  ls, cd, pwd, whoami, cat, open: openCmd, clear, projects, resume, email, scan, ping, theme, sudo,
+  'sudo hire-me': hireme,
+  godmode, backdoor, neo,
+  matrix(){ theme(['matrix']); },
+  rain(){ if(!state.motion){ state.motion=true; startMatrix(); print('rain on','ok'); } else { state.motion=false; stopMatrix(); print('rain off','warn'); } },
+};
+
+/* ===== Command execution ===== */
+async function runCommand(raw){
+  const line = raw.trim();
+  if(!line) return;
+  print(`${promptStr()} ${line}`, 'prompt');
+  beep(520,.03,.03);
+  // direct alias matching
+  if(router[line]){ await router[line]([]); return; }
+  const [cmd, ...args] = splitArgs(line);
+  const fn = router[cmd];
+  if(!fn) return unknown(cmd);
+  try{
+    const r = fn.length>0 ? await fn(args) : await fn(args); // basic await
+    return r;
+  }catch(e){
+    print(`error: ${e.message || e}`, 'err');
+  }
+}
+function splitArgs(s){
+  // simple split, supports quoted
+  const re = /"([^"]+)"|'([^']+)'|(\S+)/g;
+  const out = [];
+  let m; while((m = re.exec(s))){ out.push(m[1]||m[2]||m[3]); }
+  return out;
+}
+
+/* ===== Input / History ===== */
+document.getElementById('terminal').addEventListener('click', ()=> input.focus());
+input.addEventListener('keydown', async (e)=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const val = input.value;
+    input.value='';
+    if(state.awaitingPassword){
+      // accept on 2nd try or specific pass
+      const success = state.tries>1 || val==='letmein' || val==='hunter2';
+      if(success){
+        state.awaitingPassword=false; state.tries=0;
+        state.root = true; state.user='root'; updatePrompt();
+        print('Access granted ✔','ok'); beep(760,.05,.04);
+        if(state.pendingSudo?.cmd){
+          const cmd = state.pendingSudo.cmd;
+          state.pendingSudo=null;
+          await runCommand(cmd);
+        }else if(state.pendingSudo?.escalate){
+          revealVault();
+          state.pendingSudo=null;
+        }
+      }else{
+        print('Sorry, try again.','err'); beep(140,.08,.05);
+      }
+      return;
+    }
+    state.history.unshift(val); state.histIndex=-1;
+    await runCommand(val);
+  }else if(e.key === 'ArrowUp'){
+    e.preventDefault();
+    if(state.history.length && state.histIndex < state.history.length -1){
+      state.histIndex++; input.value = state.history[state.histIndex];
+      setTimeout(()=> input.setSelectionRange(input.value.length, input.value.length), 0);
+    }
+  }else if(e.key === 'ArrowDown'){
+    e.preventDefault();
+    if(state.histIndex>0){ state.histIndex--; input.value=state.history[state.histIndex]; }
+    else{ state.histIndex=-1; input.value=''; }
+  }else if(e.key === 'Tab'){
+    e.preventDefault();
+    // naive tab completion for commands
+    const val = input.value.trim();
+    const [cmd, ...rest] = splitArgs(val);
+    if(!cmd) return;
+    const cmds = Object.keys(router).filter(c=>c.startsWith(cmd));
+    if(cmds.length===1){ input.value = cmds[0] + (rest.length? ' '+rest.join(' '):''); }
+  }
+});
+
+/* ===== Palette ===== */
+const actions = [
+  {title:'Open: Projects', run:()=>{location.hash='#work'}},
+  {title:'Open: About', run:()=>{location.hash='#about'}},
+  {title:'Open: Contact', run:()=>{location.hash='#contact'}},
+  {title:'Run: sudo hire-me', run:()=>runCommand('sudo hire-me')},
+  {title:'Run: scan portfolio.dev', run:()=>runCommand('scan portfolio.dev')},
+  {title:'Theme: neon', run:()=>theme(['neon'])},
+  {title:'Theme: matrix', run:()=>theme(['matrix'])},
+  {title:'Theme: amber', run:()=>theme(['amber'])},
+  {title:'Toggle: rain', run:()=>runCommand('rain')},
+  {title:'Toggle: sound', run:()=>toggleSound()},
+  {title:'Secret: godmode', run:()=>runCommand('godmode')},
+];
+let palSel = 0;
+function openPalette(){
+  palette.setAttribute('aria-hidden','false');
+  palInput.value=''; palSel=0; renderPalList(actions);
+  palInput.focus();
+}
+function closePalette(){ palette.setAttribute('aria-hidden','true'); }
+function renderPalList(list){
+  palList.innerHTML='';
+  list.forEach((a,idx)=>{
+    const item = document.createElement('div');
+    item.className='pal-item';
+    item.setAttribute('aria-selected', String(idx===palSel));
+    item.innerHTML = `<span>${a.title}</span><span>↩︎</span>`;
+    item.addEventListener('click',()=>{ a.run(); closePalette(); });
+    palList.appendChild(item);
+  });
+}
+palInput.addEventListener('input', ()=>{
+  const q = palInput.value.toLowerCase().trim();
+  const filtered = actions.filter(a=>a.title.toLowerCase().includes(q));
+  palSel=0; renderPalList(filtered);
+});
+palette.addEventListener('keydown', (e)=>{
+  const items = Array.from(palList.children);
+  if(e.key==='Escape'){ closePalette(); input.focus(); }
+  if(e.key==='ArrowDown'){ palSel=Math.min(palSel+1, items.length-1); updateSel(items); e.preventDefault(); }
+  if(e.key==='ArrowUp'){ palSel=Math.max(palSel-1, 0); updateSel(items); e.preventDefault(); }
+  if(e.key==='Enter'){ const q = palInput.value.toLowerCase().trim();
+    const list = actions.filter(a=>a.title.toLowerCase().includes(q));
+    if(list[palSel]){ list[palSel].run(); closePalette(); }
+  }
+});
+function updateSel(items){ items.forEach((el,i)=>el.setAttribute('aria-selected', String(i===palSel))); }
+
+/* ===== Konami Code ===== */
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a','Enter'];
+window.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openPalette(); return; }
+  if(KONAMI[state.konamiIdx]?.toLowerCase() === e.key.toLowerCase()){
+    state.konamiIdx++;
+    if(state.konamiIdx===KONAMI.length){
+      state.konamiIdx=0; godmode(); theme(['amber']); beep(880,.08,.05);
+    }
+  }else{
+    state.konamiIdx = 0;
+  }
+});
+
+/* ===== Toggles ===== */
+function toggleMotion(){
+  state.motion = !state.motion;
+  motionToggle.textContent = state.motion ? 'motion' : 'motion*';
+  if(state.motion) startMatrix(); else stopMatrix();
+}
+function toggleSound(){
+  state.sound = !state.sound;
+  soundToggle.textContent = state.sound ? 'sound' : 'sound*';
+  if(state.sound) beep(600,.05,.04);
+}
+function toggleTheme(){
+  const order = ['neon','matrix','amber'];
+  const idx = order.indexOf(state.theme);
+  const next = order[(idx+1)%order.length];
+  theme([next]);
+}
+motionToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleMotion(); });
+soundToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleSound(); });
+themeToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleTheme(); });
+
+/* ===== Cards tilt / modal ===== */
+const projectsData = {
+  'hyperviz': {
+    title:'Hyperviz 3D',
+    body:`<p><b>Problem:</b> Static analytics bored decision-makers.</p>
+          <p><b>Solution:</b> WebGL + shaders + streamed data (60fps).</p>
+          <p><b>Impact:</b> +48% engagement, +19% paid upgrades.</p>
+          <p><b>Stack:</b> Three.js, WebGL2, Sockets, Workers</p>`
+  },
+  'fintech-core': {
+    title:'Fintech Core',
+    body:`<p><b>Problem:</b> Complex payments flows, slow support.</p>
+          <p><b>Solution:</b> Audit-grade UX, realtime reconciliation.</p>
+          <p><b>Impact:</b> -42% handling time, +23 NPS.</p>
+          <p><b>Stack:</b> React, Statecharts, WebSockets</p>`
+  },
+  'realtime-dashboard': {
+    title:'Realtime Dashboard',
+    body:`<p><b>Problem:</b> Laggy monitoring.</p>
+          <p><b>Solution:</b> GPU-accelerated charts; backpressure control.</p>
+          <p><b>Impact:</b> 0 dropped frames, 99.99% uptime.</p>`
+  },
+  'ml-playground': {
+    title:'ML Playground',
+    body:`<p><b>Problem:</b> Models felt opaque.</p>
+          <p><b>Solution:</b> Interactive visualizations to teach intuition.</p>
+          <p><b>Impact:</b> +63% demo-to-trial.</p>`
+  },
+};
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('mousemove', (e)=>{
+    const r = card.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const rx = ((y - r.height/2)/r.height)*-8;
+    const ry = ((x - r.width/2)/r.width)*8;
+    card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    card.querySelector('.shine').style.setProperty('--mx', (x/r.width*100)+'%');
+    card.querySelector('.shine').style.setProperty('--my', (y/r.height*100)+'%');
+  });
+  card.addEventListener('mouseleave', ()=> card.style.transform='rotateX(0) rotateY(0)');
+  card.addEventListener('click', ()=>{
+    const key = card.getAttribute('data-project');
+    const d = projectsData[key];
+    if(!d) return;
+    modalContent.innerHTML = `<h3>${d.title}</h3>${d.body}<p><a href="#" onclick="window.runCommand('open ${key}'); return false;">Open project ↗</a></p>`;
+    modal.setAttribute('aria-hidden','false');
+  });
+});
+modalClose.addEventListener('click',()=> modal.setAttribute('aria-hidden','true'));
+modal.addEventListener('click',(e)=>{ if(e.target===modal) modal.setAttribute('aria-hidden','true'); });
+
+/* ===== Secret brand click (Alt) ===== */
+brand.addEventListener('click', (e)=>{
+  if(e.altKey){ godmode(); }
+});
+
+/* ===== Toast ===== */
+let toastTimer=null;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> toast.classList.remove('show'), 2200);
+}
+
+/* ===== Init ===== */
+function init(){
+  updatePrompt();
+  typeLoop();
+  if(state.motion) startMatrix();
+  window.addEventListener('resize', ()=>{ if(state.motion) resize(); });
+  document.addEventListener('keydown', (e)=>{ if(palette.getAttribute('aria-hidden')==='false') return; if(e.key==='/'){ input.focus(); e.preventDefault(); } });
+}
+init();
+
+/* expose runCommand for modal link */
+window.runCommand = runCommand;
+
+/* ===== Motion respect ===== */
+if(prefersReduced.matches){
+  state.motion=false;
+  motionToggle.textContent = 'motion*';
+}
+
+/* ===== Palette open/close ===== */
+document.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    e.preventDefault(); openPalette();
+  }
+});
+palette.addEventListener('click',(e)=>{ if(e.target===palette) closePalette(); });
+</script>
+</body>
+</html>
