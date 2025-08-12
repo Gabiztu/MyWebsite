@@ -180,7 +180,7 @@ main{padding:70px 20px 80px}
   position:fixed; inset:0;
   z-index:2; pointer-events:none;
   opacity:.85; mix-blend-mode:screen;
-  /* Base line + traveling hotspot */
+  /* Cinematic triple-layer line */
   background:
     /* Base horizontal line */
     linear-gradient(to bottom,
@@ -190,15 +190,19 @@ main{padding:70px 20px 80px}
       rgba(0,0,0,1) 51%,
       rgba(0,0,0,1) 100%),
     /* Traveling hotspot flare */
-    radial-gradient(60px 22px at center, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 35%, rgba(255,255,255,0) 65%);
-  background-repeat:no-repeat,no-repeat;
-  background-size:100% 100%,18% 12%;
-  background-position:center center,-20% 50%;
+    radial-gradient(60px 22px at center, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 35%, rgba(255,255,255,0) 65%),
+    /* Anamorphic streak */
+    radial-gradient(60% 10px at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0) 70%);
+  background-repeat:no-repeat,no-repeat,no-repeat;
+  background-size:100% 100%,18% 12%,220% 8%;
+  background-position:center center,-20% 50%,center 50%;
+  background-blend-mode:screen,screen,screen;
   filter:drop-shadow(0 0 6px rgba(0,255,160,.35)) drop-shadow(0 0 12px rgba(0,200,255,.25));
   animation:
     tv-glitch 0.18s ease-in-out 0.10s 2,
     line-sweep 0.85s cubic-bezier(.22,.61,.36,1) 0.12s 1 forwards,
-    line-wobble 0.32s ease-out 0.10s 1;
+    streak-bloom 0.85s ease-out 0.10s 1,
+    line-wobble 0.42s ease-out 0.10s 1;
 }
 
 #boot-screen.transitioning::after{
