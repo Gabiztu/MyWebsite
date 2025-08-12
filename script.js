@@ -40,7 +40,7 @@ class BootSequence {
           this.el.innerHTML += '\n';
           resolve();
         }
-      }, 8); // even faster typing per new requirement
+      }, 4); // ultra-fast typing per latest request
     });
   }
 
