@@ -1,77 +1,105 @@
 /**
  * Impact Variants Helper Script
- * Applies visual impact effects during boot→main reveal transition
- * Works alongside impact.css without modifying core files
+ * Triggers visual impact effects precisely at boot→main transition
  */
 (function() {
-  // Determine which impact variant to use (1-10)
+  // Determine which impact variant to use (strobe, letterbox, cut)
   function getImpactVariant() {
     // First check for explicitly set window variable
-    if (typeof window.IMPACT_VARIANT === 'number' && 
-        window.IMPACT_VARIANT >= 1 && 
-        window.IMPACT_VARIANT <= 10) {
-      return Math.floor(window.IMPACT_VARIANT);
+    if (typeof window.IMPACT === 'string' && 
+        ['strobe', 'letterbox', 'cut'].includes(window.IMPACT)) {
+      return window.IMPACT;
     }
     
     // Otherwise check URL query param
     const params = new URLSearchParams(window.location.search);
-    const paramValue = parseInt(params.get('impact'), 10);
-    if (!isNaN(paramValue) && paramValue >= 1 && paramValue <= 10) {
+    const paramValue = params.get('impact');
+    if (paramValue && ['strobe', 'letterbox', 'cut'].includes(paramValue)) {
       return paramValue;
     }
     
-    // Default to variant 1 if nothing valid found
-    return 1;
+    // Default to strobe if nothing valid found
+    return 'strobe';
   }
 
   // Create and insert variant badge
-  function createBadge(variantNum) {
+  function createBadge(variant) {
     const badge = document.createElement('div');
     badge.className = 'impact-badge';
-    badge.textContent = `Impact v${variantNum}`;
+    badge.textContent = `Impact: ${variant}`;
     document.body.appendChild(badge);
   }
 
-  // Apply impact effect when transition begins
-  function applyImpactEffect() {
-    const variantNum = getImpactVariant();
+  // Apply impact effect class to html
+  function setupImpactVariant() {
+    const variant = getImpactVariant();
     const html = document.documentElement;
     
     // Add variant class to html element
-    html.classList.add(`impact-v${variantNum}`);
+    html.classList.add(`impact-${variant}`);
     
     // Create identification badge
-    createBadge(variantNum);
+    createBadge(variant);
     
-    // Set up observer to watch for transition class
+    return variant;
+  }
+  
+  // Trigger the impact animation
+  function triggerImpact() {
+    const html = document.documentElement;
+    
+    // Add impact-run class to trigger animation
+    html.classList.add('impact-run');
+    
+    // Remove impact-run class after animation completes
+    setTimeout(() => {
+      html.classList.remove('impact-run');
+    }, 600);
+  }
+  
+  // Expose force trigger function for testing
+  window.forceImpact = triggerImpact;
+  
+  // Main initialization
+  function initImpact() {
+    // Setup variant first
+    setupImpactVariant();
+    
+    // Get boot screen element
     const bootScreen = document.getElementById('boot-screen');
-    if (!bootScreen) return;
+    const mainPortfolio = document.getElementById('main-portfolio');
     
-    // Function to trigger impact animation
-    function triggerImpact() {
-      html.classList.add('impact-run');
-      
-      // Remove impact-run class after animation completes
-      setTimeout(() => {
-        html.classList.remove('impact-run');
-      }, 600);
-    }
-    
-    // Fail-safe: if already transitioning, trigger immediately
-    if (bootScreen.classList.contains('transitioning')) {
+    // Fallback: if boot screen not found or main portfolio already visible, trigger immediately
+    if (!bootScreen || (mainPortfolio && mainPortfolio.style.display !== 'none')) {
+      console.log('Boot animation already complete, triggering impact immediately');
       triggerImpact();
       return;
     }
     
-    // Set up observer to watch for the transitioning class
+    // If boot screen is transitioning, listen for animation end
+    if (bootScreen.classList.contains('transitioning')) {
+      bootScreen.addEventListener('animationend', function bootEndHandler() {
+        bootScreen.removeEventListener('animationend', bootEndHandler);
+        triggerImpact();
+      });
+      return;
+    }
+    
+    // Otherwise, set up observer to watch for transitioning class
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (mutation.type === 'attributes' && 
             mutation.attributeName === 'class' &&
             bootScreen.classList.contains('transitioning')) {
-          triggerImpact();
-          observer.disconnect();
-          break;
+          
+          // Once transitioning starts, listen for animation end
+          bootScreen.addEventListener('animationend', function bootEndHandler() {
+            bootScreen.removeEventListener('animationend', bootEndHandler);
+            observer.disconnect();
+            triggerImpact();
+          });
+          
+          return;
         }
       }
     });
@@ -81,12 +109,17 @@
       attributes: true,
       attributeFilter: ['class']
     });
+    
+    // Safety fallback: if after 5s nothing happened, disconnect observer
+    setTimeout(() => {
+      observer.disconnect();
+    }, 5000);
   }
 
   // Run when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyImpactEffect);
+    document.addEventListener('DOMContentLoaded', initImpact);
   } else {
-    applyImpactEffect();
+    initImpact();
   }
 })();
