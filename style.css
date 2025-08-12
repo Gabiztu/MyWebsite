@@ -173,6 +173,10 @@ main{padding:70px 20px 80px}
   transform-origin:center center;
   pointer-events:auto; /* block interactions during reveal */
   animation:tv-reveal-sync 1.1s linear forwards; /* event sync */
+  /* Immediately fade out the green boot text so it doesn't linger */
+  transition: color .12s ease-out;
+  color:rgba(0,255,0,0);
+  text-shadow:none;
 }
 
 /* Disable beam line for mask-only reveal */
