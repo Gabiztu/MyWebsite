@@ -16,9 +16,10 @@ class BootSequence {
       "Welcome, Operator.", 300,
     ];
     this.el = null;
-    // Pause controls: shrink original delays to 5%, but never below 5 ms
-    this.pauseMultiplier = 0.05;
-    this.minPause = 5;
+    /* Pause controls
+       For “instant” behaviour we eliminate pauses entirely. */
+    this.pauseMultiplier = 0; // eliminate extra pauses
+    this.minPause = 0;        // no minimum pause
   }
 
   init() {
@@ -29,18 +30,13 @@ class BootSequence {
     return new Promise(r => setTimeout(r, ms));
   }
 
+  /* Append whole line at once and resolve on next paint */
   typeLine(line) {
     return new Promise(resolve => {
-      let i = 0;
-      const interval = setInterval(() => {
-        this.el.innerHTML += line[i];
-        i++;
-        if (i === line.length) {
-          clearInterval(interval);
-          this.el.innerHTML += '\n';
-          resolve();
-        }
-      }, 1); // max-speed typing (1 ms per char)
+      requestAnimationFrame(() => {
+        this.el.innerHTML += line + '\n';
+        resolve();
+      });
     });
   }
 
@@ -52,7 +48,7 @@ class BootSequence {
         await this.typeLine(entry);
       } else {
         const ms = Math.max(this.minPause, Math.round(entry * this.pauseMultiplier));
-        await this.sleep(ms);
+        if (ms > 0) await this.sleep(ms);
       }
     }
     // Do NOT hide boot-screen or reveal main here (handled in Story 1.3)
