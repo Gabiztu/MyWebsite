@@ -37,7 +37,7 @@ class BootSequence {
           this.el.innerHTML += '\n';
           resolve();
         }
-      }, 15); // faster typing per story requirement
+      }, 8); // even faster typing per new requirement
     });
   }
 
@@ -98,6 +98,19 @@ const AppController = {
       bootScreen.style.display = 'block';
       // Store promise for later chaining in future stories
       this.bootPromise = this.modules.bootSequence.run();
+      // When boot sequence completes, fade out and reveal main
+      if (mainPortfolio) {
+        this.bootPromise.then(() => {
+          // fade-out
+          bootScreen.style.transition = 'opacity 0.4s ease-out';
+          bootScreen.style.opacity = '0';
+          setTimeout(() => {
+            bootScreen.style.display = 'none';
+            mainPortfolio.style.display = 'block';
+            this.initMain();
+          }, 400);
+        });
+      }
     }
 
     // Ensure main content hidden during boot
@@ -107,6 +120,11 @@ const AppController = {
 
     /* --- Initialise modules (bootSequence.init already inside run call) --- */
     Object.values(this.modules).forEach(module => module.init());
+
+    // If no boot screen, initialise main immediately
+    if (!bootScreen) {
+      this.initMain();
+    }
   },
   
   initMain() {
