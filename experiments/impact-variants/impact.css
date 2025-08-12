@@ -1,0 +1,259 @@
+/* =================================================================
+   Impact Variants CSS - Transition effects for boot→main reveal
+   10 different visual impact variants that trigger when html has
+   classes impact-vN impact-run
+================================================================= */
+
+/* Common utilities */
+.impact-badge {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10001;
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  font-family: monospace;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+/* Performance optimization for all variants */
+html.impact-run #main-portfolio {
+  will-change: transform, filter;
+}
+
+/* =================================================================
+   Variant 1 - Minimal Snap
+   Brightness/contrast pop + micro-zoom + subtle vignette
+================================================================= */
+html.impact-v1.impact-run #main-portfolio {
+  animation: impV1 140ms ease-out both;
+}
+
+html.impact-v1.impact-run #main-portfolio::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  animation: impV1Vignette 140ms ease-out both;
+}
+
+@keyframes impV1 {
+  0% { filter: brightness(1.12) contrast(1.08); transform: scale(1.02); }
+  100% { filter: brightness(1) contrast(1); transform: scale(1); }
+}
+
+@keyframes impV1Vignette {
+  0% { opacity: 0; }
+  30% { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+/* =================================================================
+   Variant 2 - Tech Pulse
+   RGB edge nudge + micro-zoom + saturation pulse
+================================================================= */
+html.impact-v2.impact-run #main-portfolio {
+  animation: impV2 160ms ease-out both;
+}
+
+html.impact-v2.impact-run #main-portfolio::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  opacity: 0;
+  filter: hue-rotate(180deg) saturate(2);
+  transform: translateX(1px);
+  animation: impV2Edge 70ms ease-out both;
+}
+
+@keyframes impV2 {
+  0% { filter: saturate(1.15) hue-rotate(6deg); transform: scale(1.02); }
+  60% { filter: saturate(1.1) hue-rotate(3deg); transform: scale(1.01); }
+  100% { filter: saturate(1) hue-rotate(0deg); transform: scale(1); }
+}
+
+@keyframes impV2Edge {
+  0% { opacity: 0.3; transform: translateX(1px); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+/* =================================================================
+   Variant 3 - Cinematic Letterbox
+   Letterbox bars + zoom + exposure pop
+================================================================= */
+html.impact-v3.impact-run #main-portfolio {
+  animation: impV3 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+html.impact-v3.impact-run #main-portfolio::before,
+html.impact-v3.impact-run #main-portfolio::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 0;
+  background: #000;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+html.impact-v3.impact-run #main-portfolio::before {
+  top: 0;
+  animation: impV3Letterbox 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+html.impact-v3.impact-run #main-portfolio::after {
+  bottom: 0;
+  animation: impV3Letterbox 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes impV3 {
+  0% { transform: scale(1.025); filter: brightness(1.1) contrast(1.05); }
+  40% { transform: scale(1.015); filter: brightness(1.05) contrast(1.03); }
+  100% { transform: scale(1); filter: brightness(1) contrast(1); }
+}
+
+@keyframes impV3Letterbox {
+  0% { height: 0; }
+  40% { height: 7vh; }
+  100% { height: 0; }
+}
+
+/* =================================================================
+   Variant 4 - Micro Shake
+   Small position jitter
+================================================================= */
+html.impact-v4.impact-run #main-portfolio {
+  animation: impV4 120ms ease-out both;
+}
+
+@keyframes impV4 {
+  0% { transform: translateX(0); }
+  10% { transform: translateX(-1px) translateY(0.5px); }
+  25% { transform: translateX(1px) translateY(-0.5px); }
+  40% { transform: translateX(-0.5px) translateY(-0.5px); }
+  60% { transform: translateX(0.5px) translateY(0.3px); }
+  80% { transform: translateX(-0.3px); }
+  100% { transform: translateX(0); }
+}
+
+/* =================================================================
+   Variant 5 - Bloom Flash
+   White overlay flash + slight scale
+================================================================= */
+html.impact-v5.impact-run #main-portfolio {
+  animation: impV5 160ms ease-out both;
+}
+
+html.impact-v5.impact-run #main-portfolio::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: white;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  mix-blend-mode: soft-light;
+  animation: impV5Flash 160ms ease-out both;
+}
+
+@keyframes impV5 {
+  0% { transform: scale(1.01); filter: brightness(1.1); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+@keyframes impV5Flash {
+  0% { opacity: 0; }
+  30% { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+
+/* =================================================================
+   Variant 6 - Matrix Pulse
+   Pulse matrix canvas + tiny zoom
+================================================================= */
+html.impact-v6.impact-run #main-portfolio {
+  animation: impV6 180ms ease-out both;
+}
+
+html.impact-v6.impact-run #matrix {
+  animation: impV6Matrix 180ms ease-out both;
+}
+
+@keyframes impV6 {
+  0% { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
+
+@keyframes impV6Matrix {
+  0% { opacity: 0.9; filter: brightness(1.5) saturate(1.2); }
+  40% { opacity: 0.7; filter: brightness(1.3) saturate(1.1); }
+  100% { opacity: 1; filter: brightness(1) saturate(1); }
+}
+
+/* =================================================================
+   Variant 7 - High Contrast Cut
+   Brief high contrast then back
+================================================================= */
+html.impact-v7.impact-run #main-portfolio {
+  animation: impV7 120ms ease-out both;
+}
+
+@keyframes impV7 {
+  0% { filter: contrast(1.25) brightness(1.1); }
+  40% { filter: contrast(1.15) brightness(1.05); }
+  100% { filter: contrast(1) brightness(1); }
+}
+
+/* =================================================================
+   Variant 8 - Blur Kick
+   Quick blur then resolve + tiny scale
+================================================================= */
+html.impact-v8.impact-run #main-portfolio {
+  animation: impV8 140ms ease-out both;
+}
+
+@keyframes impV8 {
+  0% { filter: blur(2px); transform: scale(1.01); }
+  40% { filter: blur(1px); transform: scale(1.005); }
+  100% { filter: blur(0); transform: scale(1); }
+}
+
+/* =================================================================
+   Variant 9 - Tilt Kick
+   Small rotation + scale
+================================================================= */
+html.impact-v9.impact-run #main-portfolio {
+  animation: impV9 160ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes impV9 {
+  0% { transform: rotateZ(0.35deg) scale(1.015); }
+  40% { transform: rotateZ(0.2deg) scale(1.01); }
+  100% { transform: rotateZ(0) scale(1); }
+}
+
+/* =================================================================
+   Variant 10 - Clean Minimal
+   Subtle brightness pop only
+================================================================= */
+html.impact-v10.impact-run #main-portfolio {
+  animation: impV10 120ms ease-out both;
+}
+
+@keyframes impV10 {
+  0% { filter: brightness(1.08); }
+  100% { filter: brightness(1); }
+}
