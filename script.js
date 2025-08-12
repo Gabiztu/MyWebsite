@@ -16,10 +16,9 @@ class BootSequence {
       "Welcome, Operator.", 300,
     ];
     this.el = null;
-    /* Pause controls
-       For “instant” behaviour we eliminate pauses entirely. */
-    this.pauseMultiplier = 0; // eliminate extra pauses
-    this.minPause = 0;        // no minimum pause
+    /* Pause controls – keep lines readable but fast */
+    this.pauseMultiplier = 0.05; // 5 % of original delay
+    this.minPause = 20;          // at least 20 ms between lines
   }
 
   init() {
@@ -30,13 +29,19 @@ class BootSequence {
     return new Promise(r => setTimeout(r, ms));
   }
 
-  /* Append whole line at once and resolve on next paint */
+  /* Per-character typing (~10 ms per char) */
   typeLine(line) {
     return new Promise(resolve => {
-      requestAnimationFrame(() => {
-        this.el.innerHTML += line + '\n';
-        resolve();
-      });
+      let i = 0;
+      const timer = setInterval(() => {
+        // append next character
+        this.el.innerHTML += line[i++] || '';
+        if (i >= line.length) {
+          clearInterval(timer);
+          this.el.innerHTML += '\n';
+          resolve();
+        }
+      }, 10); // ~10 ms cadence
     });
   }
 
