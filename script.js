@@ -16,9 +16,9 @@ class BootSequence {
       "Welcome, Operator.", 300,
     ];
     this.el = null;
-    // Pause controls: shrink original delays to 10%, but never below 10 ms
-    this.pauseMultiplier = 0.1;
-    this.minPause = 10;
+    // Pause controls: shrink original delays to 5%, but never below 5 ms
+    this.pauseMultiplier = 0.05;
+    this.minPause = 5;
   }
 
   init() {
@@ -40,7 +40,7 @@ class BootSequence {
           this.el.innerHTML += '\n';
           resolve();
         }
-      }, 2); // hyper-fast typing per latest request
+      }, 1); // max-speed typing (1 ms per char)
     });
   }
 
