@@ -271,3 +271,18 @@ main{padding:70px 20px 80px}
   from{opacity:1;}
   to  {opacity:1;}
 }
+
+/* ==============================================================
+   Canvas overlay for high-quality CRT beam (JS-driven)
+ ============================================================== */
+#crt-beam-overlay{
+  position:fixed;
+  inset:0;
+  z-index:10002;          /* above #boot-screen */
+  pointer-events:none;
+}
+
+/* When JS switches to canvas beam mode, hide CSS ::before line */
+#boot-screen.beam-canvas.transitioning::before{
+  display:none;
+}
