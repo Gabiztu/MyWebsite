@@ -778,11 +778,31 @@ const AppController = {
       bootScreen.removeEventListener('animationend', onEnd);
       document.documentElement.classList.remove('tv-revealing');
 
-      /* ----- Chaos impact flicker ----- */
+      /* ----- Chaos impact flicker : repeat every 10 s, respect reduced-motion & hidden tab ----- */
       const html = document.documentElement;
-      html.classList.add('impact-flicker-chaos', 'impact-run');
-      // remove impact-run after effect finishes (~650 ms)
-      setTimeout(() => html.classList.remove('impact-run'), 650);
+      // base class stays on html for lifetime
+      html.classList.add('impact-flicker-chaos');
+
+      const prefersReduced =
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const runChaos = () => {
+        html.classList.add('impact-run');
+        setTimeout(() => html.classList.remove('impact-run'), 650);
+      };
+
+      // fire initial impact right now
+      runChaos();
+
+      // schedule repeats every 10 s (if motion allowed)
+      if (!prefersReduced) {
+        clearInterval(window._impactChaosInterval);
+        window._impactChaosInterval = setInterval(() => {
+          if (document.hidden) return; // don’t flicker when tab not visible
+          runChaos();
+        }, 10000);
+      }
 
       bootScreen.style.display = 'none';
       /* Ensure main is initialised exactly once */
