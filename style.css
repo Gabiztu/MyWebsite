@@ -203,3 +203,51 @@ main{padding:70px 20px 80px}
   50%  {opacity:1;   transform:translateX(1px);}
   100% {opacity:.85; transform:translateX(0);}
 }
+
+/* ------------------------------------------------------------------
+   Enhanced TV turn-on effect  (Spec-aligned override layer)
+   – Uses a collapsing black mask (::after) to reveal content
+   – Keeps bright RGB line (::before) above the mask
+------------------------------------------------------------------- */
+
+#boot-screen.transitioning{
+  background:transparent;          /* reveal page during transition   */
+  animation:none;                  /* disable prior scale animation   */
+  pointer-events:none;
+}
+
+#boot-screen.transitioning::before{
+  z-index:2;
+  mix-blend-mode:screen;
+  animation:tv-glitch 0.18s ease-in-out 0.10s 2;
+}
+
+#boot-screen.transitioning::after{
+  content:"";
+  position:fixed; inset:0;
+  z-index:1; pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.45) 100%), /* vignette */
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 3px), /* scanlines */
+    #000; /* base mask */
+  transform-origin:center center;
+  animation:
+    tv-reveal 1.45s cubic-bezier(.22,.61,.36,1) forwards,
+    tv-static 0.12s steps(2,end) 0.08s 5;
+}
+
+@keyframes tv-reveal{
+  0%   {transform:scaleY(1);   opacity:1;}
+  8%   {transform:scaleY(0.08);opacity:1;}
+  12%  {transform:scaleY(0.12);}
+  18%  {transform:scaleY(0.06);}
+  35%  {transform:scaleY(0.12);}
+  65%  {transform:scaleY(0.40);}
+  100% {transform:scaleY(0);   opacity:0;}
+}
+
+@keyframes tv-static{
+  0%   {opacity:1;}
+  50%  {opacity:0.88;}
+  100% {opacity:1;}
+}
