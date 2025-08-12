@@ -154,3 +154,10 @@ main{padding:70px 20px 80px}
   margin-bottom: 8px;
   white-space: pre;
 }
+
+/* --- BOOT SEQUENCE (from porto4.html) --- */
+#boot-screen{
+  position:fixed; top:0; left:0; right:0; bottom:0; background:#000;
+  z-index:10000; display:block; font-family:'VT323', monospace; color:#0f0;
+  padding:20px; font-size:1.2rem; white-space:pre; overflow:hidden;
+}

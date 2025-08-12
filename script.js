@@ -1,7 +1,57 @@
 // Module stubs - to be implemented in future stories
 class BootSequence {
+  constructor() {
+    // Exact boot log ported from porto4.html
+    this.bootLog = [
+      "Initializing BIOS...", 500,
+      "Checking system memory........ [OK]", 200,
+      "Detecting CPU: QuantumCore v3.7 @ 8.2GHz...", 300,
+      "Detecting storage devices...", 150,
+      "  SATA:0 - SYS_DRIVE_CERBERUS_2TB [MOUNTED]", 100,
+      "  SATA:1 - PAYLOAD_DRIVE_HYDRA_8TB [MOUNTED]", 100,
+      "Starting Kernel v6.6.6-kali-amd64...", 500,
+      "Loading drivers: [ OK ] nvidia [ OK ] net [ OK ] audio", 400,
+      "Mounting virtual file systems... done.", 200,
+      "Starting Cerberus GUI... ", 800,
+      "Welcome, Operator.", 300,
+    ];
+    this.el = null;
+  }
+
   init() {
-    // No-op for now, will be implemented in future stories
+    this.el = document.getElementById('boot-screen');
+  }
+
+  sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+
+  typeLine(line) {
+    return new Promise(resolve => {
+      let i = 0;
+      const interval = setInterval(() => {
+        this.el.innerHTML += line[i];
+        i++;
+        if (i === line.length) {
+          clearInterval(interval);
+          this.el.innerHTML += '\n';
+          resolve();
+        }
+      }, 15); // faster typing per story requirement
+    });
+  }
+
+  async run() {
+    if (!this.el) this.init();
+    for (let i = 0; i < this.bootLog.length; i++) {
+      const entry = this.bootLog[i];
+      if (typeof entry === 'string') {
+        await this.typeLine(entry);
+      } else {
+        await this.sleep(entry);
+      }
+    }
+    // Do NOT hide boot-screen or reveal main here (handled in Story 1.3)
   }
 }
 
@@ -40,28 +90,22 @@ const AppController = {
   },
 
   init() {
-    // Initialize boot sequence if boot screen exists
-    const bootScreen = document.getElementById('boot-screen');
+    const bootScreen   = document.getElementById('boot-screen');
     const mainPortfolio = document.getElementById('main-portfolio');
-    
-    if (bootScreen && mainPortfolio) {
-      // Show boot screen (should already be visible by default)
+
+    /* --- Boot sequence handling (Story 1.2) --- */
+    if (bootScreen) {
       bootScreen.style.display = 'block';
-      
-      // After timeout, hide boot and show main
-      setTimeout(() => {
-        bootScreen.style.display = 'none';
-        mainPortfolio.style.display = 'block';
-        
-        // Initialize main functionality after transition
-        this.initMain();
-      }, 1200);
-    } else {
-      // If no boot screen, just init main directly
-      this.initMain();
+      // Store promise for later chaining in future stories
+      this.bootPromise = this.modules.bootSequence.run();
     }
-    
-    // Initialize stub modules (no-ops for now)
+
+    // Ensure main content hidden during boot
+    if (mainPortfolio) {
+      mainPortfolio.style.display = 'none';
+    }
+
+    /* --- Initialise modules (bootSequence.init already inside run call) --- */
     Object.values(this.modules).forEach(module => module.init());
   },
   
