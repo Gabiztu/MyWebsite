@@ -771,7 +771,10 @@ const AppController = {
     }
 
     // One-time animation end handler
+    let executed = false;
     const onEnd = () => {
+      if (executed) return;           // guard: ensure only once
+      executed = true;
       bootScreen.removeEventListener('animationend', onEnd);
       document.documentElement.classList.remove('tv-revealing');
       bootScreen.style.display = 'none';
@@ -780,7 +783,10 @@ const AppController = {
         this.initMain();
       }
     };
+    // Primary listener
     bootScreen.addEventListener('animationend', onEnd, { once: true });
+    // Fallback timeout (in case animationend never fires)
+    setTimeout(onEnd, 1600); // matches CSS duration + small buffer
   }
 };
 
