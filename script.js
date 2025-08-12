@@ -16,9 +16,9 @@ class BootSequence {
       "Welcome, Operator.", 300,
     ];
     this.el = null;
-    /* Pause controls – keep lines readable but fast */
-    this.pauseMultiplier = 0.05; // 5 % of original delay
-    this.minPause = 20;          // at least 20 ms between lines
+    /* Pause controls – keep lines readable but quicker */
+    this.pauseMultiplier = 0.02; // 2 % of original delay
+    this.minPause = 8;           // minimum 8 ms between lines
   }
 
   init() {
@@ -41,7 +41,7 @@ class BootSequence {
           this.el.innerHTML += '\n';
           resolve();
         }
-      }, 10); // ~10 ms cadence
+      }, 4); // ~4 ms cadence (faster)
     });
   }
 
