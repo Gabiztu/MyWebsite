@@ -777,6 +777,13 @@ const AppController = {
       executed = true;
       bootScreen.removeEventListener('animationend', onEnd);
       document.documentElement.classList.remove('tv-revealing');
+
+      /* ----- Chaos impact flicker ----- */
+      const html = document.documentElement;
+      html.classList.add('impact-flicker-chaos', 'impact-run');
+      // remove impact-run after effect finishes (~650 ms)
+      setTimeout(() => html.classList.remove('impact-run'), 650);
+
       bootScreen.style.display = 'none';
       /* Ensure main is initialised exactly once */
       if (!this.mainInitialised) {

@@ -265,7 +265,7 @@ main{padding:70px 20px 80px}
 
 /* --------------------------------------------------------------
    Expanding beam — scales the bright centre line from tiny to
-   thick “CRT glow”, then fades toward end of reveal
+   thick "CRT glow", then fades toward end of reveal
 --------------------------------------------------------------- */
 @keyframes line-expand{
   0%   { transform: scaleY(0.02); opacity:.88; filter:drop-shadow(0 0 8px rgba(255,255,255,.18)) drop-shadow(0 0 18px rgba(0,200,255,.20)); }
@@ -294,4 +294,31 @@ main{padding:70px 20px 80px}
 /* When JS switches to canvas beam mode, hide CSS ::before line */
 #boot-screen.beam-canvas.transitioning::before{
   display:none;
+}
+
+/* Impact – Chaos Static (headline horror flicker) */
+html.impact-flicker-chaos.impact-run #main-portfolio .glitch{
+  animation: fChaos 500ms steps(1,end) forwards;
+}
+html.impact-flicker-chaos.impact-run #main-portfolio{
+  animation: fShake 90ms ease-in-out 20ms 1 both;
+}
+html.impact-flicker-chaos.impact-run::after{
+  content:""; position:fixed; inset:0; z-index:10001; pointer-events:none;
+  opacity:.22;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0, rgba(255,255,255,.02) 1px, transparent 2px, transparent 3px);
+  mix-blend-mode:overlay;
+  animation:fNoise 500ms linear forwards;
+}
+@keyframes fChaos{
+  0%{opacity:0;} 6%{opacity:1;} 12%{opacity:.08;} 18%{opacity:1;}
+  24%{opacity:.2;} 32%{opacity:1;} 40%{opacity:.12;} 48%{opacity:1;}
+  60%{opacity:.3;} 72%{opacity:1;} 86%{opacity:.7;} 100%{opacity:1;}
+}
+@keyframes fShake{0%{transform:translateX(-1px) translateY(.4px)}50%{transform:translateX(1px) translateY(-.3px)}100%{transform:translateX(0)}}
+@keyframes fNoise{0%{opacity:.28}60%{opacity:.18}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  html.impact-flicker-chaos.impact-run #main-portfolio .glitch{ animation:none !important; opacity:1 !important; filter:none !important }
+  html.impact-flicker-chaos.impact-run #main-portfolio{ animation:none !important }
+  html.impact-flicker-chaos.impact-run::after{ animation:none !important; opacity:0 !important }
 }
