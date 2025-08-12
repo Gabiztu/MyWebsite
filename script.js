@@ -87,6 +87,8 @@ const AppController = {
     portfolio: new Portfolio(),
     themeSwitcher: new ThemeSwitcher()
   },
+  /* marks whether initMain has already executed */
+  mainInitialised: false,
 
   init() {
     const bootScreen   = document.getElementById('boot-screen');
@@ -120,6 +122,10 @@ const AppController = {
   },
   
   initMain() {
+    /* guard so we only run once */
+    if (this.mainInitialised) return;
+    this.mainInitialised = true;
+
     /* ===== Globals / State ===== */
     const out = document.getElementById('termOut');
     const input = document.getElementById('cmd');
@@ -753,13 +759,26 @@ const AppController = {
 
     // Trigger CSS animation
     bootScreen.classList.add('transitioning');
+    /* page-wide class so CSS can add filters during reveal */
+    document.documentElement.classList.add('tv-revealing');
+
+    /* Show content behind the mask immediately */
+    if (mainPortfolio) mainPortfolio.style.display = 'block';
+
+    /* Kick off main initialisation early so animations (typed, matrix) start */
+    if (!this.mainInitialised) {
+      this.initMain();
+    }
 
     // One-time animation end handler
     const onEnd = () => {
       bootScreen.removeEventListener('animationend', onEnd);
+      document.documentElement.classList.remove('tv-revealing');
       bootScreen.style.display = 'none';
-      mainPortfolio.style.display = 'block';
-      this.initMain();
+      /* Ensure main is initialised exactly once */
+      if (!this.mainInitialised) {
+        this.initMain();
+      }
     };
     bootScreen.addEventListener('animationend', onEnd, { once: true });
   }

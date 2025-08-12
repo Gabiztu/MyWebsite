@@ -171,14 +171,14 @@ main{padding:70px 20px 80px}
 #boot-screen.transitioning{
   transform-origin:center center;
   animation:tv-turn-on 1.3s ease-in-out forwards;
-}
+  pointer-events:auto;             /* block interactions during reveal */
 
 #boot-screen.transitioning::before{
   content:"";
   position:fixed; inset:0;
   pointer-events:none;
-  background:linear-gradient(to bottom,
-    rgba(0,0,0,1) 0%,
+  opacity:.9;
+  filter:drop-shadow(0 0 8px rgba(0,255,120,.45));
     rgba(0,0,0,1) 48%,
     rgba(255,255,255,0.92) 50%,
     rgba(0,0,0,1) 52%,
@@ -228,12 +228,11 @@ main{padding:70px 20px 80px}
   z-index:1; pointer-events:none;
   background:
     radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.45) 100%), /* vignette */
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 3px), /* scanlines */
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 3px), /* scanlines */
     #000; /* base mask */
   transform-origin:center center;
   animation:
-    tv-reveal 1.45s cubic-bezier(.22,.61,.36,1) forwards,
-    tv-static 0.12s steps(2,end) 0.08s 5;
+    tv-reveal 1.1s cubic-bezier(.22,.61,.36,1) forwards;
 }
 
 @keyframes tv-reveal{
@@ -250,4 +249,18 @@ main{padding:70px 20px 80px}
   0%   {opacity:1;}
   50%  {opacity:0.88;}
   100% {opacity:1;}
+}
+
+/* --------------------------------------------------------------
+   Professional exposure animation on main content during reveal
+--------------------------------------------------------------- */
+.tv-revealing #main-portfolio{
+  filter:brightness(.7) saturate(.95) blur(1.2px);
+  animation:tv-expose 1.1s ease-out forwards;
+}
+
+@keyframes tv-expose{
+  0%   {filter:brightness(.68) saturate(.9) blur(2px);}
+  55%  {filter:brightness(1.06) saturate(1) blur(.6px);}
+  100% {filter:brightness(1) saturate(1) blur(0);}
 }
