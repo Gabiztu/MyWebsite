@@ -6,13 +6,7 @@ class BootSequence {
       "Initializing BIOS...", 500,
       "Checking system memory........ [OK]", 200,
       "Detecting CPU: QuantumCore v3.7 @ 8.2GHz...", 300,
-      "Detecting storage devices...", 150,
-      "  SATA:0 - SYS_DRIVE_CERBERUS_2TB [MOUNTED]", 100,
-      "  SATA:1 - PAYLOAD_DRIVE_HYDRA_8TB [MOUNTED]", 100,
       "Starting Kernel v6.6.6-kali-amd64...", 500,
-      "Loading drivers: [ OK ] nvidia [ OK ] net [ OK ] audio", 400,
-      "Mounting virtual file systems... done.", 200,
-      "Starting Cerberus GUI... ", 800,
       "Welcome, Operator.", 300,
     ];
     this.el = null;
