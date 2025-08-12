@@ -16,6 +16,9 @@ class BootSequence {
       "Welcome, Operator.", 300,
     ];
     this.el = null;
+    // Pause controls: shrink original delays to 20%, but never below 25 ms
+    this.pauseMultiplier = 0.2;
+    this.minPause = 25;
   }
 
   init() {
@@ -48,7 +51,8 @@ class BootSequence {
       if (typeof entry === 'string') {
         await this.typeLine(entry);
       } else {
-        await this.sleep(entry);
+        const ms = Math.max(this.minPause, Math.round(entry * this.pauseMultiplier));
+        await this.sleep(ms);
       }
     }
     // Do NOT hide boot-screen or reveal main here (handled in Story 1.3)
