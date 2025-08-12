@@ -3,18 +3,33 @@
  * Triggers visual impact effects precisely at boot→main transition
  */
 (function() {
-  // Determine which impact variant to use (strobe, letterbox, cut)
+  // Allowed impact variants (keep in one place to avoid duplication)
+  const ALLOWED_VARIANTS = [
+    'strobe',
+    'letterbox',
+    'cut',
+    'flicker',
+    // new horror-movie flickers
+    'flicker-malfunction',
+    'flicker-crt',
+    'flicker-surge',
+    'flicker-phantom',
+    'flicker-bulb',
+    'flicker-chaos'
+  ];
+
+  // Determine which impact variant to use
   function getImpactVariant() {
     // First check for explicitly set window variable
-    if (typeof window.IMPACT === 'string' && 
-        ['strobe', 'letterbox', 'cut', 'flicker'].includes(window.IMPACT)) {
+    if (typeof window.IMPACT === 'string' &&
+        ALLOWED_VARIANTS.includes(window.IMPACT)) {
       return window.IMPACT;
     }
     
     // Otherwise check URL query param
     const params = new URLSearchParams(window.location.search);
     const paramValue = params.get('impact');
-    if (paramValue && ['strobe', 'letterbox', 'cut', 'flicker'].includes(paramValue)) {
+    if (paramValue && ALLOWED_VARIANTS.includes(paramValue)) {
       return paramValue;
     }
     
