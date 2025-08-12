@@ -175,6 +175,11 @@ main{padding:70px 20px 80px}
   animation:tv-reveal-sync 1.1s linear forwards; /* event sync */
 }
 
+/* Disable beam line for mask-only reveal */
+#boot-screen.transitioning::before{
+  display:none !important;
+}
+
 #boot-screen.transitioning::before{
   content:"";
   position:fixed; inset:0;

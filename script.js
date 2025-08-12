@@ -759,10 +759,6 @@ const AppController = {
 
     // Trigger CSS animation
     bootScreen.classList.add('transitioning');
-    // Switch CSS to hide ::before beam and rely on canvas overlay
-    bootScreen.classList.add('beam-canvas');
-    // Fire high-quality CRT beam overlay
-    this.playCrtBeamOverlay(1100);
     /* page-wide class so CSS can add filters during reveal */
     document.documentElement.classList.add('tv-revealing');
 
@@ -791,71 +787,6 @@ const AppController = {
     bootScreen.addEventListener('animationend', onEnd, { once: true });
     // Fallback timeout (in case animationend never fires)
     setTimeout(onEnd, 1600); // matches CSS duration + small buffer
-  },
-
-  /**
-   * Render a cinematic CRT beam using a transient full-screen canvas.
-   * @param {number} durationMs total animation duration
-   */
-  playCrtBeamOverlay(durationMs = 1100){
-    // Re-use if already present
-    let cvs = document.getElementById('crt-beam-overlay');
-    if(!cvs){
-      cvs = document.createElement('canvas');
-      cvs.id = 'crt-beam-overlay';
-      document.body.appendChild(cvs);
-    }
-    const ctx  = cvs.getContext('2d');
-    const DPR  = window.devicePixelRatio || 1;
-    function resize(){
-      cvs.width  = Math.floor(window.innerWidth  * DPR);
-      cvs.height = Math.floor(window.innerHeight * DPR);
-      cvs.style.width  = window.innerWidth  + 'px';
-      cvs.style.height = window.innerHeight + 'px';
-    }
-    resize(); window.addEventListener('resize', resize, { once:true});
-
-    const start = performance.now();
-    const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
-    const smoothstep   = (e0,e1,x)=>{ x=Math.min(1,Math.max(0,(x-e0)/(e1-e0))); return x*x*(3-2*x); };
-
-    const loop = now => {
-      const t = (now - start) / durationMs;
-      if(t>=1){ cleanup(); return; }
-
-      const w  = cvs.width, hTot = cvs.height;
-      ctx.clearRect(0,0,w,hTot);
-
-      /* beam dimensions */
-      const beamH  = Math.max(1, Math.round(hTot * (0.01 + 0.7 * easeOutCubic(t))));
-      const yMid   = hTot>>1;
-      const yTop   = yMid - (beamH>>1);
-
-      /* global alpha peaks mid-way then fades */
-      ctx.globalAlpha = smoothstep(0.0,0.35,t) * (1 - smoothstep(0.65,1.0,t));
-
-      /* draw cyan/green fringes */
-      const drawFringe = (offset,color) => {
-        ctx.fillStyle = color;
-        ctx.fillRect(0, yTop + offset, w, beamH);
-      };
-      drawFringe(-2*DPR,'rgba(0,255,180,0.25)');
-      drawFringe( 2*DPR,'rgba(0,200,255,0.25)');
-
-      /* core white beam with soft vertical gradient */
-      const grd = ctx.createLinearGradient(0, yTop, 0, yTop+beamH);
-      grd.addColorStop(0,'rgba(255,255,255,0)');
-      grd.addColorStop(0.5,'rgba(255,255,255,0.92)');
-      grd.addColorStop(1,'rgba(255,255,255,0)');
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, yTop, w, beamH);
-
-      requestAnimationFrame(loop);
-    };
-    const cleanup = () => {
-      cvs.remove();
-    };
-    requestAnimationFrame(loop);
   }
 };
 
