@@ -791,7 +791,7 @@ const AppController = {
     bootScreen.addEventListener('animationend', onEnd, { once: true });
     // Fallback timeout (in case animationend never fires)
     setTimeout(onEnd, 1600); // matches CSS duration + small buffer
-  }
+  },
 
   /**
    * Render a cinematic CRT beam using a transient full-screen canvas.
