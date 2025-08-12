@@ -7,14 +7,14 @@
   function getImpactVariant() {
     // First check for explicitly set window variable
     if (typeof window.IMPACT === 'string' && 
-        ['strobe', 'letterbox', 'cut'].includes(window.IMPACT)) {
+        ['strobe', 'letterbox', 'cut', 'flicker'].includes(window.IMPACT)) {
       return window.IMPACT;
     }
     
     // Otherwise check URL query param
     const params = new URLSearchParams(window.location.search);
     const paramValue = params.get('impact');
-    if (paramValue && ['strobe', 'letterbox', 'cut'].includes(paramValue)) {
+    if (paramValue && ['strobe', 'letterbox', 'cut', 'flicker'].includes(paramValue)) {
       return paramValue;
     }
     

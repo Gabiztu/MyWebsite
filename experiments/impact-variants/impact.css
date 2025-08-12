@@ -168,3 +168,33 @@ html.impact-cut.impact-run #main-portfolio {
     filter: none;
   }
 }
+
+/* =================================================================
+   Variant 4 - Headline Flicker
+   Strong discrete flicker on the hero headline at impact
+================================================================= */
+html.impact-flicker.impact-run #main-portfolio .glitch{
+  animation: impactHeadlineFlicker 280ms steps(1,end) forwards;
+  will-change: opacity, filter;
+}
+
+@keyframes impactHeadlineFlicker{
+  0%   { opacity:0;    filter:brightness(2) contrast(1.2); }
+  7%   { opacity:1;    filter:brightness(1.4) contrast(1.1); }
+  13%  { opacity:0.15; filter:brightness(0.8) contrast(1.05); }
+  20%  { opacity:1;    filter:brightness(1.3) contrast(1.1); }
+  28%  { opacity:0.25; filter:brightness(0.9); }
+  40%  { opacity:1;    filter:brightness(1.2); }
+  58%  { opacity:0.4;  filter:brightness(0.9); }
+  70%  { opacity:1;    filter:brightness(1.1); }
+  100% { opacity:1;    filter:none; }
+}
+
+/* Reduced motion: keep headline steady */
+@media (prefers-reduced-motion: reduce){
+  html.impact-flicker.impact-run #main-portfolio .glitch{
+    animation:none;
+    filter:none;
+    opacity:1;
+  }
+}
