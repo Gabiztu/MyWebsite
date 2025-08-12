@@ -100,14 +100,7 @@ const AppController = {
       // When boot sequence completes, fade out and reveal main
       if (mainPortfolio) {
         this.bootPromise.then(() => {
-          // fade-out
-          bootScreen.style.transition = 'opacity 0.4s ease-out';
-          bootScreen.style.opacity = '0';
-          setTimeout(() => {
-            bootScreen.style.display = 'none';
-            mainPortfolio.style.display = 'block';
-            this.initMain();
-          }, 400);
+          this.transitionToMainView();
         });
       }
     }
@@ -740,6 +733,35 @@ const AppController = {
       }
     });
     palette.addEventListener('click',(e)=>{ if(e.target===palette) closePalette(); });
+  }
+
+  /**
+   * Story 1.3 – CRT TV “turn-on” transition animation.
+   * Adds the `.transitioning` class to #boot-screen which triggers CSS
+   * keyframes. Once the animation ends, the boot screen is removed and the
+   * main portfolio is revealed, followed by normal main-initialisation.
+   */
+  transitionToMainView() {
+    const bootScreen    = document.getElementById('boot-screen');
+    const mainPortfolio = document.getElementById('main-portfolio');
+    if (!bootScreen || !mainPortfolio) {
+      // Fallback: nothing to transition, just show main.
+      if (mainPortfolio) mainPortfolio.style.display = 'block';
+      this.initMain();
+      return;
+    }
+
+    // Trigger CSS animation
+    bootScreen.classList.add('transitioning');
+
+    // One-time animation end handler
+    const onEnd = () => {
+      bootScreen.removeEventListener('animationend', onEnd);
+      bootScreen.style.display = 'none';
+      mainPortfolio.style.display = 'block';
+      this.initMain();
+    };
+    bootScreen.addEventListener('animationend', onEnd, { once: true });
   }
 };
 

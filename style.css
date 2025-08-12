@@ -161,3 +161,45 @@ main{padding:70px 20px 80px}
   z-index:10000; display:block; font-family:'VT323', monospace; color:#0f0;
   padding:20px; font-size:1.2rem; white-space:pre; overflow:hidden;
 }
+
+/* ------------------------------------------------------------------
+   TV turn-on transition (Story 1.3)
+   When JS adds the .transitioning class to #boot-screen, this animation
+   plays, expanding a thin horizontal line into full-screen to reveal the
+   portfolio. A brief glitch flickers via the ::before pseudo-element.
+------------------------------------------------------------------- */
+#boot-screen.transitioning{
+  transform-origin:center center;
+  animation:tv-turn-on 1.3s ease-in-out forwards;
+}
+
+#boot-screen.transitioning::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background:linear-gradient(to bottom,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,1) 48%,
+    rgba(255,255,255,0.92) 50%,
+    rgba(0,0,0,1) 52%,
+    rgba(0,0,0,1) 100%);
+  filter:drop-shadow(0 0 12px rgba(0,255,120,.6))
+         drop-shadow(0 0 22px rgba(0,255,120,.35));
+  animation:tv-glitch 0.18s ease-in-out 0.18s 2;
+}
+
+@keyframes tv-turn-on{
+  0%   {transform:scaleY(0.02);}
+  6%   {transform:scaleY(0.025);}
+  12%  {transform:scaleY(0.035);}
+  22%  {transform:scaleY(0.05);}
+  60%  {transform:scaleY(0.09);}
+  80%  {transform:scaleY(0.5);}
+  100% {transform:scaleY(1);}
+}
+
+@keyframes tv-glitch{
+  0%   {opacity:.85; transform:translateX(-1px);}
+  50%  {opacity:1;   transform:translateX(1px);}
+  100% {opacity:.85; transform:translateX(0);}
+}
