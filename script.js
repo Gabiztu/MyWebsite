@@ -375,7 +375,7 @@ const AppController = {
     async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
     async function scan(args){
       /* allow dots, colons and hyphens; place the - at the end of the class
-         to avoid “Range out of order in character class” errors */
+         to avoid "Range out of order in character class" errors */
       const target = (args[0]||'localhost').replace(/[^a-zA-Z0-9.:\-]/g,'');
       print(`Scanning ${target} ...`);
       const ports = [22,80,443,8080,3000,5000,5432,6379];
@@ -733,10 +733,10 @@ const AppController = {
       }
     });
     palette.addEventListener('click',(e)=>{ if(e.target===palette) closePalette(); });
-  }
+  },
 
   /**
-   * Story 1.3 – CRT TV “turn-on” transition animation.
+   * Story 1.3 – CRT TV "turn-on" transition animation.
    * Adds the `.transitioning` class to #boot-screen which triggers CSS
    * keyframes. Once the animation ends, the boot screen is removed and the
    * main portfolio is revealed, followed by normal main-initialisation.
