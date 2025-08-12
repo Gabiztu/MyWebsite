@@ -6,6 +6,17 @@
   <title>Uplink // Ultimate Portfolio</title>
   <meta name="color-scheme" content="dark">
   <link rel="stylesheet" href="style.css">
+  <style>
+  .hero .sub { position: relative; }
+  .typed-wrap { position: relative; display:inline-block; }
+  .typed-wrap::before {
+    content: ""; position:absolute; inset:-6px -10px;
+    background: rgba(0,0,0,.25);
+    backdrop-filter: blur(3px) brightness(.7) contrast(1.15);
+    border-radius:8px; z-index:0;
+  }
+  .typed-wrap .typed { position:relative; z-index:1; color:#eafff7; }
+  </style>
 </head>
 <body>
   <!-- Boot screen - initially visible -->
@@ -38,11 +49,7 @@
     <main>
       <section class="hero">
         <span class="badge">SYSTEM STATUS • ONLINE</span>
-        <h1
-          class="glitch"
-          data-text="ACCESS GRANTED. INTELLIGENCE DEPLOYED. SYSTEMS ARCHITECTED.">
-          ACCESS GRANTED. INTELLIGENCE DEPLOYED. SYSTEMS ARCHITECTED.
-        </h1>
+        <h1 class="glitch" data-text="ACCESS GRANTED. INTELLIGENCE DEPLOYED. SYSTEMS&nbsp;ARCHITECTED.">ACCESS GRANTED. INTELLIGENCE DEPLOYED. SYSTEMS&nbsp;ARCHITECTED.</h1>
         <p class="sub"><span class="typed-wrap"><span class="typed" id="typed"></span></span></p>
         <!-- Hero CTAs removed per PRD (FR8) -->
 
