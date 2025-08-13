@@ -71,6 +71,9 @@ class MatrixBackground {
     this.columns = 0;               // number of glyph columns
     this.drops   = [];              // per-column y+speed
     this.rafId   = 0;               // requestAnimationFrame handle
+    /* surge (cinematic boot cascade) state */
+    this.surgeStart = 0;            // timestamp when start() called
+    this.SURGE_DURATION = 2000;     // 2 s surge window
 
     /* glyph set – esoteric Unicode */
     this.glyphs =
@@ -96,6 +99,7 @@ class MatrixBackground {
   /* Public API ---------------------------------------------------------- */
   start () {
     if (!this.canvas || this.rafId) return;
+    this.surgeStart = performance.now(); // trigger cinematic surge
     this._resize();
     this._loop();
   }
@@ -122,7 +126,9 @@ class MatrixBackground {
     this.columns = Math.floor(this.w / (14 * devicePixelRatio));
     this.drops = Array.from({ length: this.columns }, () => ({
       y: 0,
-      speed: 0.5 + Math.random()      // 0.5 → 1.5
+      speed: 0.5 + Math.random(),     // 0.5 → 1.5 (base speed)
+      /* extra stacked chars for density explosion (2-4 extras → total 3-5) */
+      extra: 2 + Math.floor(Math.random()*3)
     }));
     this.ctx.font = `${14 * devicePixelRatio}px ui-monospace, monospace`;
   }
@@ -135,6 +141,8 @@ class MatrixBackground {
     const accent = getComputedStyle(document.documentElement)
       .getPropertyValue('--accent')
       .trim() || '#0f0';
+    const now = performance.now();
+    const surgeProg = Math.min(1, (now - this.surgeStart) / this.SURGE_DURATION); // 0 → 1
 
     for (let i = 0; i < this.drops.length; i++) {
       const d = this.drops[i];
@@ -142,17 +150,32 @@ class MatrixBackground {
       const y = d.y * 18 * devicePixelRatio;
       const char = this.glyphs[Math.floor(Math.random() * this.glyphs.length)];
 
-      /* Random flicker (~3 %) */
-      const flicker = Math.random() < 0.03;
-      this.ctx.fillStyle = flicker ? '#ffffff' : accent;
-      this.ctx.fillText(char, x, y);
+      /* ---- Colour / brightness surge ---- */
+      let clr = accent;
+      if (surgeProg < 1) {
+        // First half of surge is bright white, then fades to accent
+        clr = surgeProg < 0.5 ? '#ffffff' : accent;
+      } else {
+        // normal flicker after surge
+        const flicker = Math.random() < 0.03;
+        clr = flicker ? '#ffffff' : accent;
+      }
+      this.ctx.fillStyle = clr;
+
+      /* ---- Density: draw main char + diminishing extras stacked upward ---- */
+      const count = 1 + Math.ceil(d.extra * (1 - surgeProg)); // from 3-5 → 1
+      for (let n = 0; n < count; n++) {
+        this.ctx.fillText(char, x, y - n * 18 * devicePixelRatio);
+      }
 
       /* Reset column off-screen + randomise speed */
       if (y > this.h && Math.random() > 0.975) {
         d.y = 0;
         d.speed = 0.5 + Math.random();
       }
-      d.y += d.speed;
+      /* ---- Speed burst: 3x → 1x over surge duration ---- */
+      const speedMul = 3 - 2 * surgeProg; // 3 → 1
+      d.y += d.speed * speedMul;
     }
     this.rafId = requestAnimationFrame(() => this._loop());
   }
