@@ -20,7 +20,7 @@ body{
   letter-spacing:.3px; overflow-x:hidden; cursor:crosshair;
 }
 /* Matrix canvas + CRT */
-#matrix{position:fixed; inset:0; z-index:-3}
+#matrix-background{position:fixed; inset:0; z-index:-3}
 .fx{
   pointer-events:none; position:fixed; inset:0; z-index:-2;
   background:
