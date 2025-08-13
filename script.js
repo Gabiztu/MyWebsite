@@ -54,9 +54,107 @@ class BootSequence {
   }
 }
 
+/* =========================================================================
+ * MatrixBackground — encapsulated Matrix "rain" canvas animation
+ * Exposes: init()  · start()  · stop()  · updateTheme()
+ * The animation colour is derived from CSS custom property --accent on each
+ * frame, so updateTheme() is effectively just a restart (cheap).
+ * ======================================================================= */
 class MatrixBackground {
-  init() {
-    // No-op for now, will be implemented in future stories
+  constructor () {
+    /* DOM / drawing context */
+    this.canvas = null;
+    this.ctx    = null;
+
+    /* geometry / animation state */
+    this.w = 0; this.h = 0;         // canvas size (device pixels)
+    this.columns = 0;               // number of glyph columns
+    this.drops   = [];              // per-column y+speed
+    this.rafId   = 0;               // requestAnimationFrame handle
+
+    /* glyph set – esoteric Unicode */
+    this.glyphs =
+      'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ' + // Katakana
+      '┌┐└┘├┤┬┴┼│─╱╲╳╔╗╚╝' +                       // Box drawing
+      '░▒▓█▌▐' +                                    // Block elements
+      '◆◇◈◉◎◌' +                                   // Geometric shapes
+      '∑∏√∞≡≈∧∨⊕⊗⊙' +                              // Math symbols
+      '♠♣♥♦' +                                     // Card suits
+      '0123456789';                                // Digits (for rarity)
+  }
+
+  /* Grab canvas & bind resize listener */
+  init () {
+    this.canvas = document.getElementById('matrix-background');
+    if (!this.canvas?.getContext) return;
+    this.ctx = this.canvas.getContext('2d');
+    window.addEventListener('resize', () => {
+      if (this.rafId) this._resize();
+    });
+  }
+
+  /* Public API ---------------------------------------------------------- */
+  start () {
+    if (!this.canvas || this.rafId) return;
+    this._resize();
+    this._loop();
+  }
+
+  stop () {
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+    this.rafId = 0;
+    // Clear canvas
+    this.ctx?.clearRect(0, 0, this.w, this.h);
+  }
+
+  /* Theme change hook – restart once so new accent takes effect instantly */
+  updateTheme () {
+    if (this.rafId) {
+      this.stop();
+      this.start();
+    }
+  }
+
+  /* Internal helpers ---------------------------------------------------- */
+  _resize () {
+    this.w = this.canvas.width  = Math.floor(window.innerWidth  * devicePixelRatio);
+    this.h = this.canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+    this.columns = Math.floor(this.w / (14 * devicePixelRatio));
+    this.drops = Array.from({ length: this.columns }, () => ({
+      y: 0,
+      speed: 0.5 + Math.random()      // 0.5 → 1.5
+    }));
+    this.ctx.font = `${14 * devicePixelRatio}px ui-monospace, monospace`;
+  }
+
+  _loop () {
+    /* subtle black overlay for trail */
+    this.ctx.fillStyle = 'rgba(5,7,10,0.08)';
+    this.ctx.fillRect(0, 0, this.w, this.h);
+
+    const accent = getComputedStyle(document.documentElement)
+      .getPropertyValue('--accent')
+      .trim() || '#0f0';
+
+    for (let i = 0; i < this.drops.length; i++) {
+      const d = this.drops[i];
+      const x = i * 14 * devicePixelRatio;
+      const y = d.y * 18 * devicePixelRatio;
+      const char = this.glyphs[Math.floor(Math.random() * this.glyphs.length)];
+
+      /* Random flicker (~3 %) */
+      const flicker = Math.random() < 0.03;
+      this.ctx.fillStyle = flicker ? '#ffffff' : accent;
+      this.ctx.fillText(char, x, y);
+
+      /* Reset column off-screen + randomise speed */
+      if (y > this.h && Math.random() > 0.975) {
+        d.y = 0;
+        d.speed = 0.5 + Math.random();
+      }
+      d.y += d.speed;
+    }
+    this.rafId = requestAnimationFrame(() => this._loop());
   }
 }
 
@@ -131,7 +229,6 @@ const AppController = {
     const input = document.getElementById('cmd');
     const whoEl = document.getElementById('who');
     const cwdEl = document.getElementById('cwd');
-    const canvas = document.getElementById('matrix');
     const brand = document.getElementById('brand');
     const motionToggle = document.getElementById('motionToggle');
     const soundToggle = document.getElementById('soundToggle');
@@ -174,43 +271,6 @@ const AppController = {
         o.connect(g); g.connect(audioCtx.destination);
         o.start(); o.stop(audioCtx.currentTime + dur);
       }catch(e){}
-    }
-
-    /* ===== Matrix Rain ===== */
-    let ctx, w, h, columns, drops, rafId;
-    function startMatrix(){
-      if(!state.motion) return;
-      if(!canvas.getContext) return;
-      ctx = canvas.getContext('2d');
-      resize();
-      if(rafId) cancelAnimationFrame(rafId);
-      loop();
-    }
-    function resize(){
-      w = canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
-      h = canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
-      columns = Math.floor(w / (14 * devicePixelRatio));
-      drops = Array(columns).fill(0);
-      ctx.font = `${14*devicePixelRatio}px ui-monospace, monospace`;
-    }
-    const glyphs = 'ｱｲｳｴｵｶｷ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&<>/\\\\';
-    function loop(){
-      ctx.fillStyle = 'rgba(5,7,10,0.08)';
-      ctx.fillRect(0,0,w,h);
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0f0';
-      for(let i=0;i<drops.length;i++){
-        const x = i * 14 * devicePixelRatio;
-        const y = drops[i] * 18 * devicePixelRatio;
-        const char = glyphs[Math.floor(Math.random()*glyphs.length)];
-        ctx.fillText(char, x, y);
-        if(y > h && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-      rafId = requestAnimationFrame(loop);
-    }
-    function stopMatrix(){
-      if(rafId) cancelAnimationFrame(rafId);
-      canvas.getContext?.('2d')?.clearRect(0,0,w,h);
     }
 
     /* ===== Typed hero ===== */
@@ -428,7 +488,7 @@ const AppController = {
       state.theme = t;
       print(`theme set to ${t}`, 'ok');
       // kick matrix color change
-      if(state.motion){ stopMatrix(); startMatrix(); }
+      AppController.modules.matrixBackground.updateTheme();
     }
     function resume(){ cat(['~/resume.txt']); }
     function email(){ print('Opening mail...'); window.location.href='mailto:your@email.com'; }
@@ -484,7 +544,17 @@ const AppController = {
       'sudo hire-me': hireme,
       godmode, backdoor, neo,
       matrix(){ theme(['matrix']); },
-      rain(){ if(!state.motion){ state.motion=true; startMatrix(); print('rain on','ok'); } else { state.motion=false; stopMatrix(); print('rain off','warn'); } },
+      rain(){ 
+        if(!state.motion){ 
+          state.motion=true; 
+          AppController.modules.matrixBackground.start(); 
+          print('rain on','ok'); 
+        } else { 
+          state.motion=false; 
+          AppController.modules.matrixBackground.stop(); 
+          print('rain off','warn'); 
+        } 
+      },
     };
 
     /* ===== Command execution ===== */
@@ -631,7 +701,11 @@ const AppController = {
     function toggleMotion(){
       state.motion = !state.motion;
       motionToggle.textContent = state.motion ? 'motion' : 'motion*';
-      if(state.motion) startMatrix(); else stopMatrix();
+      if(state.motion) {
+        AppController.modules.matrixBackground.start();
+      } else {
+        AppController.modules.matrixBackground.stop();
+      }
     }
     function toggleSound(){
       state.sound = !state.sound;
@@ -717,8 +791,12 @@ const AppController = {
     function init(){
       updatePrompt();
       typeLoop();
-      if(state.motion) startMatrix();
-      window.addEventListener('resize', ()=>{ if(state.motion) resize(); });
+      if(state.motion) {
+        AppController.modules.matrixBackground.start();
+      }
+      window.addEventListener('resize', ()=>{ 
+        // Resize is handled by the MatrixBackground module
+      });
       document.addEventListener('keydown', (e)=>{ if(palette.getAttribute('aria-hidden')==='false') return; if(e.key==='/'){ input.focus(); e.preventDefault(); } });
     }
     init();
@@ -799,7 +877,7 @@ const AppController = {
       if (!prefersReduced) {
         clearInterval(window._impactChaosInterval);
         window._impactChaosInterval = setInterval(() => {
-          if (document.hidden) return; // don’t flicker when tab not visible
+          if (document.hidden) return; // don't flicker when tab not visible
           runChaos();
         }, 10000);
       }
