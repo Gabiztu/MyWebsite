@@ -75,6 +75,12 @@ main{padding:70px 20px 80px}
 .typed{color:var(--accent)}
 .ctas{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
 
+/* Mobile line-break control for hero headline */
+.mbr{display:inline}
+@media (max-width:720px){ .mbr{display:block; height:0} }
+/* Hide heavy glitch overlays on small screens to ensure clean wraps */
+@media (max-width:480px){ .glitch::before, .glitch::after{ display:none !important } }
+
 /* Contact icons */
 .contact-icons{display:flex; gap:12px; align-items:center}
 .icon-btn{width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; color:var(--fg);
