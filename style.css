@@ -78,8 +78,6 @@ main{padding:70px 20px 80px}
 /* Mobile line-break control for hero headline */
 .mbr{display:inline}
 @media (max-width:720px){ .mbr{display:block; height:0} }
-/* Hide heavy glitch overlays on small screens to ensure clean wraps */
-@media (max-width:480px){ .glitch::before, .glitch::after{ display:none !important } }
 
 /* Contact icons */
 .contact-icons{display:flex; gap:12px; align-items:center}
