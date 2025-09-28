@@ -30,7 +30,7 @@
     /* Matrix canvas + CRT */
     #matrix{position:fixed; inset:0; z-index:-3}
     .fx{
-      pointer-events:none; position:fixed; inset:0; z-index:-2;
+      pointer-events:none; position:fixed; inset:0; z-index:1;
       background:
         radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.45) 100%),
         repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 2px, transparent 3px);
@@ -118,6 +118,7 @@
       #matrix{display:none}
       .fx{background:none}
     }
+    
     @media (max-width:720px){
       .nav{display:flex; gap:10px; flex-wrap:wrap}
       .nav a{margin-left:0; font-size:14px; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:rgba(255,255,255,.04)}

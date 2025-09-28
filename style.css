@@ -53,6 +53,8 @@ main{padding:70px 20px 80px}
   position:relative; font-size:clamp(34px, 5.6vw, 86px); line-height:1.06; margin:16px 0 10px; text-transform:uppercase;
   color:#d4fff1; text-shadow:0 0 12px color-mix(in oklab, var(--accent) 40%, transparent);
   white-space:pre-wrap;
+  /* Prevent mobile overflow on long words (e.g., ARCHITECTED.) */
+  overflow-wrap:anywhere; word-break:break-word; hyphens:auto;
 }
 /* Pseudo-element glitch effect */
 .glitch::before,
@@ -72,6 +74,14 @@ main{padding:70px 20px 80px}
 .sub{color:var(--muted); font-size:clamp(14px, 1.8vw, 18px); max-width:720px}
 .typed{color:var(--accent)}
 .ctas{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
+
+/* Contact icons */
+.contact-icons{display:flex; gap:12px; align-items:center}
+.icon-btn{width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; color:var(--fg);
+  background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:10px; text-decoration:none;
+  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease}
+.icon-btn:hover{transform:translateY(-1px); box-shadow:0 0 22px -8px color-mix(in oklab, var(--accent) 60%, transparent); border-color:color-mix(in oklab, var(--accent) 65%, transparent)}
+.icon-btn svg{width:22px; height:22px; display:block; fill:currentColor}
 /* ===== Typed readability enhancement ===== */
 .hero .sub{position:relative}
 .typed-wrap{position:relative;display:inline-block}
