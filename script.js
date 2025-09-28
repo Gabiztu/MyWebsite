@@ -1,4 +1,5 @@
 // Module stubs - to be implemented in future stories
+
 class BootSequence {
   constructor() {
     // Exact boot log ported from porto4.html
@@ -189,7 +190,49 @@ class Terminal {
 
 class Portfolio {
   init() {
-    // No-op for now, will be implemented in future stories
+    /* Grab modal elements locally so we don't rely on outer-scope vars */
+    const modal        = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+
+    const cards = document.querySelectorAll('.card');
+    if (!cards.length) return; // nothing to bind on pages without cards
+
+    // Implement interactive tilt and modal behaviour
+    cards.forEach(card => {
+      // Add mousemove event listener to calculate position and apply tilt
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        // Calculate cursor position relative to the center of the card
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        // Calculate rotation values based on cursor position
+        const rx = ((y - r.height/2)/r.height)*-8; // Negative for natural tilt
+        const ry = ((x - r.width/2)/r.width)*8;
+        /* Store rotation in CSS variables so CSS can combine scale + rotation */
+        card.style.setProperty('--rx', `${rx}deg`);
+        card.style.setProperty('--ry', `${ry}deg`);
+        // Update shine effect position by setting CSS variables
+        card.querySelector('.shine').style.setProperty('--mx', (x/r.width*100)+'%');
+        card.querySelector('.shine').style.setProperty('--my', (y/r.height*100)+'%');
+      });
+      
+      // Reset rotation variables on mouseleave
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      });
+      
+      // Add click event for modal display
+      card.addEventListener('click', () => {
+        const key = card.getAttribute('data-project');
+        const d   = window.projectsData?.[key];
+        if (!d || !modal || !modalContent) return;
+        modalContent.innerHTML =
+          `<h3>${d.title}</h3>${d.body}` +
+          `<p><a href="#" onclick="window.runCommand('open ${key}'); return false;">Open project ↗</a></p>`;
+        modal.setAttribute('aria-hidden','false');
+      });
+    });
   }
 }
 
@@ -239,6 +282,16 @@ const AppController = {
     // If no boot screen, initialise main immediately
     if (!bootScreen) {
       this.initMain();
+
+      /* Scroll to hash target once DOM ready (no boot reveal to wait for) */
+      if (location.hash) {
+        setTimeout(() => {
+          const target = document.querySelector(location.hash);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 0);
+      }
     }
   },
   
@@ -263,6 +316,13 @@ const AppController = {
     const modalClose = document.getElementById('modalClose');
     const modalContent = document.getElementById('modalContent');
     const toast = document.getElementById('toast');
+
+    // About page CTA (ensure redirect even if default navigation is blocked)
+    const ctaContact = document.getElementById('cta-contact');
+    ctaContact?.addEventListener('click', (e) => {
+      e.preventDefault();                           // avoid duplicate/blocked nav
+      window.location.href = 'index.html#contact';  // force redirect
+    });
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const state = {
@@ -340,7 +400,7 @@ const AppController = {
       '/readme.txt': {type:'file', content:`Welcome to the uplink.\r\n- Try: help, ls, cd projects, open hyperviz\r\n- Try: scan portfolio.dev\r\n- Hidden: help -a, sudo -s, godmode`},
       '/home/guest/notes.txt': {type:'file', content:`Notes\r\n- Motion-safe by default.\r\n- Command palette on Ctrl/Cmd+K.\r\n- Color themes: neon, matrix, amber.`},
       '/home/guest/resume.txt': {type:'file', content:`Resume\r\nRole: Frontend/Creative Engineer\r\nFocus: WebGL, motion systems, high-performance UX\r\nStack: JS/TS, Three.js, GSAP/Framer, WebAudio, GLSL\r\nImpact: +30–120% conversion lifts across projects`},
-      '/home/guest/contacts.url': {type:'file', content:`mailto:your@email.com`},
+      '/home/guest/contacts.url': {type:'file', content:`mailto:dragomirgabriel12@yahoo.com`},
       '/about/skills.txt': {type:'file', content:`Skills: WebGL, shaders, real-time data viz, design systems, perf budgets`},
       '/about/toolchain.txt': {type:'file', content:`Toolchain: Vite/Next/SvelteKit, r3f, Tailwind/vanilla-extract, Vercel, Resend`},
       '/etc/motd': {type:'file', content:`Authorized access only. All activity logged.`},
@@ -349,23 +409,23 @@ const AppController = {
 
       '/projects/hyperviz/case.md': {type:'file', content:`Hyperviz 3D\r\nProblem: Static analytics bored decision-makers.\r\nSolution: WebGL + shaders + streamed data, 60fps.\r\nImpact: +48% engagement, +19% paid upgrades.`},
       '/projects/hyperviz/stack.txt': {type:'file', content:`Three.js, WebGL2, Instancing, Sockets, Workers`},
-      '/projects/hyperviz/open.url': {type:'file', content:`https://example.com/hyperviz`},
+      '/projects/hyperviz/open.url': {type:'file', content:`https://rrealestate.vercel.app`},
 
       '/projects/fintech-core/case.md': {type:'file', content:`Fintech Core\r\nProblem: Complex payments flows, slow support.\r\nSolution: Audit-grade flows, realtime recon.\r\nImpact: -42% handling time, +23 NPS.`},
       '/projects/fintech-core/stack.txt': {type:'file', content:`React, Statecharts, WebSockets, Post-queue`},
-      '/projects/fintech-core/open.url': {type:'file', content:`https://example.com/fintech`},
+      '/projects/fintech-core/open.url': {type:'file', content:`https://wgency.vercel.app`},
 
       '/projects/realtime-dashboard/case.md': {type:'file', content:`Realtime Dashboard\r\nProblem: Laggy monitoring.\r\nSolution: GPU-accelerated charts; backpressure control.\r\nImpact: 0 dropped frames, 99.99% uptime.`},
       '/projects/realtime-dashboard/stack.txt': {type:'file', content:`Canvas2D, OffscreenCanvas, SharedArrayBuffer`},
-      '/projects/realtime-dashboard/open.url': {type:'file', content:`https://example.com/realtime`},
+      '/projects/realtime-dashboard/open.url': {type:'file', content:`https://travelly-five.vercel.app`},
 
       '/projects/ml-playground/case.md': {type:'file', content:`ML Playground\r\nProblem: Models felt opaque.\r\nSolution: Interactive visualizations to teach intuition.\r\nImpact: +63% demo-to-trial.`},
       '/projects/ml-playground/stack.txt': {type:'file', content:`WebGL, WASM, GPU.js`},
-      '/projects/ml-playground/open.url': {type:'file', content:`https://example.com/ml`},
+      '/projects/ml-playground/open.url': {type:'file', content:`https://brndy.vercel.app`},
 
       '/vault/secrets.txt': {type:'file', content:`FLAG{clients-love-cinematic-perf}`, restricted:true},
       '/vault/keys.gpg': {type:'file', content:`-----BEGIN PGP MESSAGE----- ***** -----END PGP MESSAGE-----`, restricted:true},
-      '/vault/flag.txt': {type:'file', content:`Hire me → your@email.com`, restricted:true},
+      '/vault/flag.txt': {type:'file', content:`Hire me → dragomirgabriel12@yahoo.com`, restricted:true},
     };
 
     /* ===== Utilities ===== */
@@ -514,7 +574,7 @@ const AppController = {
       AppController.modules.matrixBackground.updateTheme();
     }
     function resume(){ cat(['~/resume.txt']); }
-    function email(){ print('Opening mail...'); window.location.href='mailto:your@email.com'; }
+    function email(){ print('Opening mail...'); window.location.href='mailto:dragomirgabriel12@yahoo.com'; }
     function projects(){ location.hash = '#work'; print('Jumped to #work'); }
     async function sudo(args){
       const subcmd = args.join(' ').trim();
@@ -723,7 +783,9 @@ const AppController = {
     /* ===== Toggles ===== */
     function toggleMotion(){
       state.motion = !state.motion;
-      motionToggle.textContent = state.motion ? 'motion' : 'motion*';
+      if (motionToggle) {
+        motionToggle.textContent = state.motion ? 'motion' : 'motion*';
+      }
       if(state.motion) {
         AppController.modules.matrixBackground.start();
       } else {
@@ -732,7 +794,9 @@ const AppController = {
     }
     function toggleSound(){
       state.sound = !state.sound;
-      soundToggle.textContent = state.sound ? 'sound' : 'sound*';
+      if (soundToggle) {
+        soundToggle.textContent = state.sound ? 'sound' : 'sound*';
+      }
       if(state.sound) beep(600,.05,.04);
     }
     function toggleTheme(){
@@ -745,60 +809,51 @@ const AppController = {
     soundToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleSound(); });
     themeToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleTheme(); });
 
-    /* ===== Cards tilt / modal ===== */
+    /* ===== Project data for modals ===== */
     const projectsData = {
       'hyperviz': {
-        title:'Hyperviz 3D',
-        body:`<p><b>Problem:</b> Static analytics bored decision-makers.</p>
-              <p><b>Solution:</b> WebGL + shaders + streamed data (60fps).</p>
-              <p><b>Impact:</b> +48% engagement, +19% paid upgrades.</p>
-              <p><b>Stack:</b> Three.js, WebGL2, Sockets, Workers</p>`
+        title:'RealEstate',
+        body:`<p><b>What it is:</b> Real estate landing and listings for Romania — verified homes across top cities.</p>
+              <p><b>Highlights:</b> Hero carousel, featured properties, city sections, fast booking for viewings.</p>
+              <p><b>Focus:</b> Clear CTAs, quick browse, trustworthy presentation.</p>`
       },
       'fintech-core': {
-        title:'Fintech Core',
-        body:`<p><b>Problem:</b> Complex payments flows, slow support.</p>
-              <p><b>Solution:</b> Audit-grade UX, realtime reconciliation.</p>
-              <p><b>Impact:</b> -42% handling time, +23 NPS.</p>
-              <p><b>Stack:</b> React, Statecharts, WebSockets</p>`
+        title:'WGENCY',
+        body:`<p><b>What it is:</b> Digital agency site showcasing components, features, pricing and testimonials.</p>
+              <p><b>Highlights:</b> Modular sections, client logos, FAQs, and app promo with store badges.</p>
+              <p><b>Focus:</b> Conversion‑ready layout and reusable UI blocks.</p>`
       },
       'realtime-dashboard': {
-        title:'Realtime Dashboard',
-        body:`<p><b>Problem:</b> Laggy monitoring.</p>
-              <p><b>Solution:</b> GPU-accelerated charts; backpressure control.</p>
-              <p><b>Impact:</b> 0 dropped frames, 99.99% uptime.</p>`
+        title:'TRAVELLY',
+        body:`<p><b>What it is:</b> Travel landing for discovering destinations and planning trips.</p>
+              <p><b>Highlights:</b> Top destinations, 3‑step booking flow, testimonials and newsletter.</p>
+              <p><b>Focus:</b> Simple trip planning with clear visuals.</p>`
       },
       'ml-playground': {
-        title:'ML Playground',
-        body:`<p><b>Problem:</b> Models felt opaque.</p>
-              <p><b>Solution:</b> Interactive visualizations to teach intuition.</p>
-              <p><b>Impact:</b> +63% demo-to-trial.</p>`
+        title:'BRNDY',
+        body:`<p><b>What it is:</b> Branding studio landing with bold typography and scroll-driven sections.</p>
+              <p><b>Highlights:</b> "We build brands" hero, cases showcase, insights/blog, and strong contact CTA.</p>
+              <p><b>Focus:</b> Brand strategy, identity, and web presence.</p>`
       },
     };
-    document.querySelectorAll('.card').forEach(card=>{
-      card.addEventListener('mousemove', (e)=>{
-        const r = card.getBoundingClientRect();
-        const x = e.clientX - r.left, y = e.clientY - r.top;
-        const rx = ((y - r.height/2)/r.height)*-8;
-        const ry = ((x - r.width/2)/r.width)*8;
-        card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-        card.querySelector('.shine').style.setProperty('--mx', (x/r.width*100)+'%');
-        card.querySelector('.shine').style.setProperty('--my', (y/r.height*100)+'%');
-      });
-      card.addEventListener('mouseleave', ()=> card.style.transform='rotateX(0) rotateY(0)');
-      card.addEventListener('click', ()=>{
-        const key = card.getAttribute('data-project');
-        const d = projectsData[key];
-        if(!d) return;
-        modalContent.innerHTML = `<h3>${d.title}</h3>${d.body}<p><a href="#" onclick="window.runCommand('open ${key}'); return false;">Open project ↗</a></p>`;
-        modal.setAttribute('aria-hidden','false');
-      });
-    });
+
+    /* Expose projectsData globally for Portfolio class */
+    window.projectsData = projectsData;
+
+    /* ===== Modal close handlers ===== */
     modalClose.addEventListener('click',()=> modal.setAttribute('aria-hidden','true'));
     modal.addEventListener('click',(e)=>{ if(e.target===modal) modal.setAttribute('aria-hidden','true'); });
 
     /* ===== Secret brand click (Alt) ===== */
-    brand.addEventListener('click', (e)=>{
-      if(e.altKey){ godmode(); }
+    /* ===== Brand click: always go home; Alt+click triggers secret ===== */
+    brand.addEventListener('click', (e) => {
+      if (e.altKey) {               // preserve secret behaviour
+        e.preventDefault();
+        godmode();
+        return;
+      }
+      // Always redirect to homepage
+      window.location.href = 'index.html';
     });
 
     /* ===== Toast ===== */
@@ -830,7 +885,7 @@ const AppController = {
     /* ===== Motion respect ===== */
     if(prefersReduced.matches){
       state.motion=false;
-      motionToggle.textContent = 'motion*';
+      if (motionToggle) motionToggle.textContent = 'motion*';
     }
 
     /* ===== Palette open/close ===== */
@@ -879,36 +934,24 @@ const AppController = {
       bootScreen.removeEventListener('animationend', onEnd);
       document.documentElement.classList.remove('tv-revealing');
 
-      /* ----- Chaos impact flicker : repeat every 10 s, respect reduced-motion & hidden tab ----- */
-      const html = document.documentElement;
-      // base class stays on html for lifetime
-      html.classList.add('impact-flicker-chaos');
-
-      const prefersReduced =
-        window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      const runChaos = () => {
-        html.classList.add('impact-run');
-        setTimeout(() => html.classList.remove('impact-run'), 650);
-      };
-
-      // fire initial impact right now
-      runChaos();
-
-      // schedule repeats every 10 s (if motion allowed)
-      if (!prefersReduced) {
-        clearInterval(window._impactChaosInterval);
-        window._impactChaosInterval = setInterval(() => {
-          if (document.hidden) return; // don't flicker when tab not visible
-          runChaos();
-        }, 10000);
-      }
-
       bootScreen.style.display = 'none';
       /* Ensure main is initialised exactly once */
       if (!this.mainInitialised) {
         this.initMain();
+      }
+
+      // After reveal, if URL has a hash (e.g., #contact), scroll to it now
+      if (location.hash) {
+        const scrollNow = () => {
+          const target = document.querySelector(location.hash);
+          if (target) {
+            // Use immediate scroll to avoid being cancelled by animations
+            target.scrollIntoView({ behavior: 'auto', block: 'start' });
+          }
+        };
+        // Try immediately and again shortly after layout settles
+        setTimeout(scrollNow, 0);
+        setTimeout(scrollNow, 120);
       }
     };
     // Primary listener

@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Uplink // Ultimate Portfolio</title>
-  <!-- Google Fonts: VT323 for boot sequence -->
+  <!-- Google Fonts: Inter for primary typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <meta name="color-scheme" content="dark">
   <link rel="stylesheet" href="style.css">
   <style>
@@ -32,14 +33,11 @@
     <div class="fx" aria-hidden="true"></div>
 
     <header>
-      <div class="brand" id="brand">>_ GHOSTWIRE // Collective.</div>
+      <a class="brand" id="brand" href="index.html">>_ GABRIEL // Creative Engineer</a>
       <nav class="nav">
-        <a href="#work">work</a>
-        <a href="#about">about</a>
+        <a href="about.html">about</a>
         <a href="#contact">contact</a>
-        <a href="#" id="motionToggle" title="Toggle motion">motion</a>
-        <a href="#" id="soundToggle" title="Toggle sound">sound</a>
-        <a href="#" id="themeToggle" title="Toggle theme">theme</a>
+        <a href="#" id="themeToggle" title="Toggle theme">switch</a>
       </nav>
     </header>
 
@@ -56,8 +54,7 @@
           <div class="term-body" id="termOut" role="log" aria-live="polite">
             <div class="line">Booting uplink...</div>
             <div class="line">Loaded modules: ui, net, fs, viz, stealth ✔</div>
-            <div class="line"></div>
-            <div class="line">We architect and build complete digital systems. Our expertise spans from complex backend infrastructure and AI-driven automation to the immersive, performance-first frontends that bring them to life. We solve hard problems with elegant, robust solutions.</div>
+            <div class="line">Type <span class="ok">help</span> to begin. Press <span class="ok">Ctrl/Cmd + K</span> for command palette.</div>
           </div>
           <div class="term-input">
             <span class="prompt"><span id="who">guest</span>@portfolio:<span id="cwd">~</span>$</span>
@@ -72,36 +69,31 @@
         <div class="grid" id="grid">
           <div class="card" data-project="hyperviz">
             <div class="shine"></div>
-            <div class="title">HYPERVIZ 3D</div>
-            <div class="meta">WebGL • Shader systems • 60fps dashboards</div>
+            <div class="title">REAL ESTATE</div>
+            <div class="meta">Verified homes • Romania • Book viewings</div>
           </div>
           <div class="card" data-project="fintech-core">
             <div class="shine"></div>
-            <div class="title">FINTECH CORE</div>
-            <div class="meta">Payments engine • Audit-grade UX • Realtime</div>
+            <div class="title">WGENCY</div>
+            <div class="meta">Digital agency • Components • Pricing</div>
           </div>
           <div class="card" data-project="realtime-dashboard">
             <div class="shine"></div>
-            <div class="title">REALTIME DASHBOARD</div>
-            <div class="meta">Streams • Animations • Zero-lag</div>
+            <div class="title">TRAVELLY</div>
+            <div class="meta">Travel landing • Destinations • Easy booking</div>
           </div>
           <div class="card" data-project="ml-playground">
             <div class="shine"></div>
-            <div class="title">ML PLAYGROUND</div>
-            <div class="meta">Interactive demos • Model visualizations</div>
+            <div class="title">BRNDY</div>
+            <div class="meta">Branding studio • Cases • Insights</div>
           </div>
         </div>
       </section>
 
-      <section id="about" class="section">
-        <h2>About</h2>
-        <p>I design and build cinematic interfaces: WebGL, 3D, motion systems, and performance-first frontends that convert. Available for select projects.</p>
-      </section>
-
       <section id="contact" class="section">
         <h2>Contact</h2>
-        <p>Email: <a href="mailto:your@email.com">your@email.com</a></p>
-        <p>Calendar: <a href="#" onclick="alert('Wire your scheduler here.');return false;">Schedule a call</a></p>
+        <p>Email: <a href="mailto:dragomirgabriel12@yahoo.com">dragomirgabriel12@yahoo.com</a></p>
+        <p>LinkedIn: <a href="https://www.linkedin.com/in/gabriel-valentin-dragomir-a70929155/" target="_blank" rel="noopener noreferrer">linkedin.com/in/gabriel-valentin-dragomir-a70929155</a></p>
       </section>
     </main>
 

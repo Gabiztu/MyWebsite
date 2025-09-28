@@ -1,8 +1,8 @@
 :root{
-  --bg:#05070a; --bg2:#0b1220; --fg:#e6fff3; --muted:#9fb2a8;
-  --accent:#00ff9c; --accent2:#00e5ff; --accent3:#ff00e6;
-  --term:#081116; --grid:#0a1016; --border:rgba(255,255,255,0.08);
-  --ok:#8cffbf; --warn:#ffc267; --err:#ff6b6b;
+  --bg:#0b0f14; --bg2:#0f1623; --fg:#eaf2ff; --muted:#9fb3c8;
+  --accent:#7c3aed; --accent2:#22d3ee; --accent3:#f59e0b;
+  --term:#0a0f18; --grid:#0e1522; --border:rgba(255,255,255,0.08);
+  --ok:#34d399; --warn:#fbbf24; --err:#f87171;
 }
 [data-theme="matrix"]{
   --bg:#030a06; --bg2:#07120c; --fg:#d5ffe9; --muted:#8bbf9f;
@@ -16,10 +16,19 @@
 html,body{height:100%}
 body{
   margin:0; background:radial-gradient(1200px 800px at 20% 10%, var(--bg2) 0%, var(--bg) 55%, #020406 100%);
-  color:var(--fg); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color:var(--fg); font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   letter-spacing:.3px; overflow-x:hidden; cursor:crosshair;
 }
 /* Matrix canvas + CRT */
+/* ------------------------------------------------------------------
+   About page override — remove aggressive radial gradient
+------------------------------------------------------------------- */
+body.page-about{
+  /* Flat, non-aggressive dark background */
+  background: var(--bg) !important;
+  background-image: none !important;
+}
+
 #matrix-background{position:fixed; inset:0; z-index:-3}
 .fx{
   pointer-events:none; position:fixed; inset:0; z-index:-2;
@@ -33,7 +42,7 @@ header{
   padding:16px 22px; background:linear-gradient(to bottom, rgba(5,7,10,.85), rgba(5,7,10,0));
   border-bottom:1px solid var(--border); backdrop-filter:saturate(130%) blur(6px);
 }
-.brand{color:var(--accent); font-weight:700; letter-spacing:1px; user-select:none; cursor:alias}
+.brand{color:var(--accent); font-weight:700; letter-spacing:1px; user-select:none; cursor:alias; text-decoration:none}
 .nav a{color:var(--muted); text-decoration:none; margin-left:16px}
 .nav a:hover{color:var(--fg)}
 main{padding:70px 20px 80px}
@@ -85,6 +94,17 @@ main{padding:70px 20px 80px}
 }
 .btn:hover{transform:translateY(-1px); box-shadow:0 0 24px -8px color-mix(in oklab, var(--accent) 65%, transparent); border-color:color-mix(in oklab, var(--accent) 70%, transparent)}
 .btn.alt{--b:color-mix(in oklab, var(--accent2) 50%, transparent)}
+
+/* Glassmorphic button hover: blur + subtle dark gradient */
+.btn:hover,
+.btn.alt:hover{
+  /* match header's glass effect */
+  background:linear-gradient(to bottom, rgba(5,7,10,.55), rgba(5,7,10,.35));
+  -webkit-backdrop-filter:saturate(140%) blur(4px);
+  backdrop-filter:saturate(140%) blur(4px);
+  /* retain original text colour */
+  color:var(--fg);
+}
 /* Terminal */
 .terminal{max-width:1100px; margin:18px auto 40px auto; border:1px solid var(--border); border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
   overflow:hidden; box-shadow:0 10px 50px rgba(0,0,0,.4)}
@@ -102,15 +122,37 @@ main{padding:70px 20px 80px}
 .section{max-width:1100px; margin:0 auto; padding:20px 0}
 .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px}
 .card{
-  position:relative; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  /* Glassmorphic backdrop similar to header */
+  position:relative;
+  background:linear-gradient(to bottom, rgba(5,7,10,.6), rgba(5,7,10,.3));
+  backdrop-filter:saturate(130%) blur(6px);
   border:1px solid var(--border); border-radius:14px; padding:16px; perspective:800px; transform-style:preserve-3d;
-  transition:box-shadow .2s ease, border-color .2s ease;
+  transition:box-shadow .2s ease, border-color .2s ease, transform .15s ease;
 }
-.card:hover{box-shadow:0 26px 60px rgba(0,0,0,.35); border-color:color-mix(in oklab, var(--accent) 50%, transparent)}
+.card:hover{
+  /* Professional lift effect: subtle accent glow + deep shadow */
+  box-shadow:
+    0 0 13px 3px color-mix(in oklab, var(--accent) 45%, transparent),
+    0 24px 60px rgba(0,0,0,.55);
+  /* Brighter edge, but slightly toned down */
+  border-color:color-mix(in oklab, var(--accent) 80%, transparent);
+  /* Gentle scale-up for premium feel */
+  transform:scale(1.02) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+}
 .card .title{font-weight:700; color:var(--fg)}
 .card .meta{color:var(--muted); font-size:12px}
-.shine{position:absolute; inset:0; border-radius:inherit; background:radial-gradient(600px 300px at var(--mx,50%) var(--my,50%), color-mix(in oklab, var(--accent) 14%, transparent), transparent 55%); opacity:0; transition:opacity .2s}
+.shine{
+  position:absolute; inset:0; border-radius:inherit;
+  /* Increased colour intensity for stronger shine */
+  background:radial-gradient(600px 300px at var(--mx,50%) var(--my,50%), color-mix(in oklab, var(--accent) 22%, transparent), transparent 55%);
+  opacity:0; transition:opacity .2s;
+}
 .card:hover .shine{opacity:1}
+/* Active click feedback */
+.card:active{
+  transform:scale(0.97);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.4), 0 20px 50px rgba(0,0,0,.4);
+}
 /* Palette */
 .palette{position:fixed; inset:0; display:none; place-items:center; z-index:20; background:rgba(0,0,0,.5); backdrop-filter:blur(6px)}
 .palette[aria-hidden="false"]{display:grid}
@@ -121,12 +163,13 @@ main{padding:70px 20px 80px}
 .pal-item{padding:10px 14px; border-top:1px solid var(--border); cursor:pointer; display:flex; justify-content:space-between}
 .pal-item[aria-selected="true"]{background:rgba(255,255,255,.06)}
 /* Modal */
+/* Modal (original minimal styles) */
 .modal{position:fixed; inset:0; display:none; place-items:center; z-index:22; background:rgba(0,0,0,.6); backdrop-filter:blur(8px)}
 .modal[aria-hidden="false"]{display:grid}
 .modal-body{width:min(820px,96vw); background:var(--term); border:1px solid var(--border); border-radius:12px; padding:18px}
 .modal-body h3{margin:0 0 6px 0}
 .close{float:right; cursor:pointer; color:var(--muted)}
-/* Toast */
+
 .toast{position:fixed; bottom:18px; right:18px; z-index:30; background:var(--term); color:var(--fg); border:1px solid var(--border); border-radius:10px; padding:10px 14px; display:none}
 .toast.show{display:block}
 /* Accessibility */
@@ -158,7 +201,7 @@ main{padding:70px 20px 80px}
 /* --- BOOT SEQUENCE (from porto4.html) --- */
 #boot-screen{
   position:fixed; top:0; left:0; right:0; bottom:0; background:#000;
-  z-index:10000; display:block; font-family:'VT323', monospace; color:#0f0;
+  z-index:10000; display:block; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; color:#0f0;
   padding:20px; font-size:1.2rem; white-space:pre; overflow:hidden;
 }
 
@@ -322,3 +365,4 @@ html.impact-flicker-chaos.impact-run::after{
   html.impact-flicker-chaos.impact-run #main-portfolio{ animation:none !important }
   html.impact-flicker-chaos.impact-run::after{ animation:none !important; opacity:0 !important }
 }
+

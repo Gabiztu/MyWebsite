@@ -126,7 +126,7 @@
   <div class="fx" aria-hidden="true"></div>
 
   <header>
-    <div class="brand" id="brand">>_ UPLINK // YOUR NAME</div>
+    <div class="brand" id="brand">>_ GABRIEL // Creative Engineer</div>
     <nav class="nav">
       <a href="#work">work</a>
       <a href="#about">about</a>
@@ -168,23 +168,23 @@
       <div class="grid" id="grid">
         <div class="card" data-project="hyperviz">
           <div class="shine"></div>
-          <div class="title">HYPERVIZ 3D</div>
-          <div class="meta">WebGL • Shader systems • 60fps dashboards</div>
+          <div class="title">REAL ESTATE</div>
+          <div class="meta">Verified homes • Romania • Book viewings</div>
         </div>
         <div class="card" data-project="fintech-core">
           <div class="shine"></div>
-          <div class="title">FINTECH CORE</div>
-          <div class="meta">Payments engine • Audit-grade UX • Realtime</div>
+          <div class="title">WGENCY</div>
+          <div class="meta">Digital agency • Components • Pricing</div>
         </div>
         <div class="card" data-project="realtime-dashboard">
           <div class="shine"></div>
-          <div class="title">REALTIME DASHBOARD</div>
-          <div class="meta">Streams • Animations • Zero-lag</div>
+          <div class="title">TRAVELLY</div>
+          <div class="meta">Travel landing • Destinations • Easy booking</div>
         </div>
         <div class="card" data-project="ml-playground">
           <div class="shine"></div>
-          <div class="title">ML PLAYGROUND</div>
-          <div class="meta">Interactive demos • Model visualizations</div>
+          <div class="title">BRNDY</div>
+          <div class="meta">Branding studio • Cases • Insights</div>
         </div>
       </div>
     </section>
@@ -196,8 +196,8 @@
 
     <section id="contact" class="section">
       <h2>Contact</h2>
-      <p>Email: <a href="mailto:your@email.com">your@email.com</a></p>
-      <p>Calendar: <a href="#" onclick="alert('Wire your scheduler here.');return false;">Schedule a call</a></p>
+      <p>Email: <a href="mailto:dragomirgabriel12@yahoo.com">dragomirgabriel12@yahoo.com</a></p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/gabriel-valentin-dragomir-a70929155/" target="_blank" rel="noopener noreferrer">linkedin.com/in/gabriel-valentin-dragomir-a70929155</a></p>
     </section>
   </main>
 
@@ -360,7 +360,7 @@ Role: Frontend/Creative Engineer
 Focus: WebGL, motion systems, high-performance UX
 Stack: JS/TS, Three.js, GSAP/Framer, WebAudio, GLSL
 Impact: +30–120% conversion lifts across projects`},
-  '/home/guest/contacts.url': {type:'file', content:`mailto:your@email.com`},
+  '/home/guest/contacts.url': {type:'file', content:`mailto:dragomirgabriel12@yahoo.com`},
   '/about/skills.txt': {type:'file', content:`Skills: WebGL, shaders, real-time data viz, design systems, perf budgets`},
   '/about/toolchain.txt': {type:'file', content:`Toolchain: Vite/Next/SvelteKit, r3f, Tailwind/vanilla-extract, Vercel, Resend`},
   '/etc/motd': {type:'file', content:`Authorized access only. All activity logged.`},
@@ -373,32 +373,32 @@ Problem: Static analytics bored decision-makers.
 Solution: WebGL + shaders + streamed data, 60fps.
 Impact: +48% engagement, +19% paid upgrades.`},
   '/projects/hyperviz/stack.txt': {type:'file', content:`Three.js, WebGL2, Instancing, Sockets, Workers`},
-  '/projects/hyperviz/open.url': {type:'file', content:`https://example.com/hyperviz`},
+  '/projects/hyperviz/open.url': {type:'file', content:`https://rrealestate.vercel.app`},
 
   '/projects/fintech-core/case.md': {type:'file', content:`Fintech Core
 Problem: Complex payments flows, slow support.
 Solution: Audit-grade flows, realtime recon.
 Impact: -42% handling time, +23 NPS.`},
   '/projects/fintech-core/stack.txt': {type:'file', content:`React, Statecharts, WebSockets, Post-queue`},
-  '/projects/fintech-core/open.url': {type:'file', content:`https://example.com/fintech`},
+  '/projects/fintech-core/open.url': {type:'file', content:`https://wgency.vercel.app`},
 
   '/projects/realtime-dashboard/case.md': {type:'file', content:`Realtime Dashboard
 Problem: Laggy monitoring.
 Solution: GPU-accelerated charts; backpressure control.
 Impact: 0 dropped frames, 99.99% uptime.`},
   '/projects/realtime-dashboard/stack.txt': {type:'file', content:`Canvas2D, OffscreenCanvas, SharedArrayBuffer`},
-  '/projects/realtime-dashboard/open.url': {type:'file', content:`https://example.com/realtime`},
+  '/projects/realtime-dashboard/open.url': {type:'file', content:`https://travelly-five.vercel.app`},
 
   '/projects/ml-playground/case.md': {type:'file', content:`ML Playground
 Problem: Models felt opaque.
 Solution: Interactive visualizations to teach intuition.
 Impact: +63% demo-to-trial.`},
   '/projects/ml-playground/stack.txt': {type:'file', content:`WebGL, WASM, GPU.js`},
-  '/projects/ml-playground/open.url': {type:'file', content:`https://example.com/ml`},
+  '/projects/ml-playground/open.url': {type:'file', content:`https://brndy.vercel.app`},
 
   '/vault/secrets.txt': {type:'file', content:`FLAG{clients-love-cinematic-perf}`, restricted:true},
   '/vault/keys.gpg': {type:'file', content:`-----BEGIN PGP MESSAGE----- ***** -----END PGP MESSAGE-----`, restricted:true},
-  '/vault/flag.txt': {type:'file', content:`Hire me → your@email.com`, restricted:true},
+  '/vault/flag.txt': {type:'file', content:`Hire me → dragomirgabriel12@yahoo.com`, restricted:true},
 };
 
 /* ===== Utilities ===== */
@@ -774,30 +774,28 @@ themeToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleTheme();
 /* ===== Cards tilt / modal ===== */
 const projectsData = {
   'hyperviz': {
-    title:'Hyperviz 3D',
-    body:`<p><b>Problem:</b> Static analytics bored decision-makers.</p>
-          <p><b>Solution:</b> WebGL + shaders + streamed data (60fps).</p>
-          <p><b>Impact:</b> +48% engagement, +19% paid upgrades.</p>
-          <p><b>Stack:</b> Three.js, WebGL2, Sockets, Workers</p>`
+    title:'RealEstate',
+    body:`<p><b>What it is:</b> Real estate landing and listings for Romania — verified homes across top cities.</p>
+          <p><b>Highlights:</b> Hero carousel, featured properties, city sections, fast booking for viewings.</p>
+          <p><b>Focus:</b> Clear CTAs, quick browse, trustworthy presentation.</p>`
   },
   'fintech-core': {
-    title:'Fintech Core',
-    body:`<p><b>Problem:</b> Complex payments flows, slow support.</p>
-          <p><b>Solution:</b> Audit-grade UX, realtime reconciliation.</p>
-          <p><b>Impact:</b> -42% handling time, +23 NPS.</p>
-          <p><b>Stack:</b> React, Statecharts, WebSockets</p>`
+    title:'WGENCY',
+    body:`<p><b>What it is:</b> Digital agency site showcasing components, features, pricing and testimonials.</p>
+          <p><b>Highlights:</b> Modular sections, client logos, FAQs, and app promo with store badges.</p>
+          <p><b>Focus:</b> Conversion‑ready layout and reusable UI blocks.</p>`
   },
   'realtime-dashboard': {
-    title:'Realtime Dashboard',
-    body:`<p><b>Problem:</b> Laggy monitoring.</p>
-          <p><b>Solution:</b> GPU-accelerated charts; backpressure control.</p>
-          <p><b>Impact:</b> 0 dropped frames, 99.99% uptime.</p>`
+    title:'TRAVELLY',
+    body:`<p><b>What it is:</b> Travel landing for discovering destinations and planning trips.</p>
+          <p><b>Highlights:</b> Top destinations, 3‑step booking flow, testimonials and newsletter.</p>
+          <p><b>Focus:</b> Simple trip planning with clear visuals.</p>`
   },
   'ml-playground': {
-    title:'ML Playground',
-    body:`<p><b>Problem:</b> Models felt opaque.</p>
-          <p><b>Solution:</b> Interactive visualizations to teach intuition.</p>
-          <p><b>Impact:</b> +63% demo-to-trial.</p>`
+    title:'BRNDY',
+    body:`<p><b>What it is:</b> Branding studio landing with bold typography and scroll-driven sections.</p>
+          <p><b>Highlights:</b> "We build brands" hero, cases showcase, insights/blog, and strong contact CTA.</p>
+          <p><b>Focus:</b> Brand strategy, identity, and web presence.</p>`
   },
 };
 document.querySelectorAll('.card').forEach(card=>{

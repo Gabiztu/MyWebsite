@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gabriel Dragomir • About</title>
+  <!-- Google Fonts: Inter for primary typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <meta name="color-scheme" content="dark">
+  <link rel="stylesheet" href="style.css">
+  <style>
+  .hero .sub { position: relative; }
+  .typed-wrap { position: relative; display:inline-block; }
+  .typed-wrap::before {
+    content: ""; position:absolute; inset:-6px -10px;
+    background: rgba(0,0,0,.25);
+    backdrop-filter: blur(3px) brightness(.7) contrast(1.15);
+    border-radius:8px; z-index:0;
+  }
+  .typed-wrap .typed { position:relative; z-index:1; color:#eafff7; }
+  .service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:8px}
+  .service-card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border-radius:12px;padding:14px}
+  .service-card h4{margin:0 0 6px 0}
+  .service-card ul{margin:0 0 0 18px;padding:0}
+  </style>
+</head>
+<body class="page-about">
+  <canvas id="matrix-background" aria-hidden="true"></canvas>
+  <div class="fx" aria-hidden="true"></div>
+
+  <header>
+    <a class="brand" id="brand" href="index.html">>_ GABRIEL // Creative Engineer</a>
+    <nav class="nav">
+      <a href="about.html">about</a>
+      <a href="index.html#contact">contact</a>
+      <a href="#" id="themeToggle" title="Toggle theme">switch</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>About Gabriel</h2>
+      <p>I’m an AI Developer focused on practical AI and high‑impact web. I build AI agents, automations, data pipelines, and fast, reliable interfaces that actually save time.</p>
+    </section>
+
+    <section class="section">
+      <h3>What I do</h3>
+      <ul>
+        <li>Website redesigns that improve speed, SEO, and conversions</li>
+        <li>AI agents and automations (chatbots, lead triage, content, reporting)</li>
+        <li>Retrieval‑augmented search over your docs and data</li>
+        <li>Dashboards and internal tools; CRM/Slack/Notion integrations</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h3>Stack</h3>
+      <p>JavaScript/TypeScript, React/Next, Node/Python. LLMs (OpenAI, Anthropic), LangChain/LlamaIndex, vector DBs (Pinecone/FAISS), webhooks/APIs, Vercel/Cloudflare. Comfortable shipping end‑to‑end.</p>
+    </section>
+
+    <section class="section">
+      <h3>Principles</h3>
+      <ul>
+        <li>Minimal copy, strong visuals, fast loads</li>
+        <li>Motion with purpose; accessibility respected</li>
+        <li>Clear scope, short feedback loops, predictable delivery</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h3>Why should you build with me?</h3>
+      <ul>
+        <li>Outcome‑driven: performance, clarity, measurable results</li>
+        <li>End‑to‑end: from concept and UI to data, infra, and deployment</li>
+        <li>Reliable delivery: tight feedback loops and clean, documented code</li>
+        <li>Long‑term partner: I maintain, improve, and support what I build</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h3>Services</h3>
+      <div class="service-grid">
+        <div class="service-card">
+          <h4>Web Development</h4>
+          <ul>
+            <li>High‑impact sites and product pages (React/Next)</li>
+            <li>Clean, fast, SEO‑friendly builds</li>
+            <li>Animations and crisp interactions</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <h4>AI Automations</h4>
+          <ul>
+            <li>LLM agents for lead triage and support</li>
+            <li>Content/report generation pipelines</li>
+            <li>Retrieval over your docs and knowledge base</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <h4>Bots & Integrations</h4>
+          <ul>
+            <li>Slack/Discord chatbots and workflows</li>
+            <li>CRM, Notion, Gmail, and webhook automations</li>
+            <li>Form handling, notifications, approvals</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <h4>Data & Databases</h4>
+          <ul>
+            <li>Postgres design with Prisma/Drizzle</li>
+            <li>Vector DBs (Pinecone/FAISS) for search</li>
+            <li>ETL jobs, dashboards, scheduled reports</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h3>Long‑term support</h3>
+      <p>I stand behind what I ship: monitoring, bug fixes, performance checks, and iterative improvements. Support plans available for ongoing care and new features.</p>
+    </section>
+
+    <section class="section">
+      <h3>Currently</h3>
+      <p>Available for select projects.</p>
+      <div class="ctas">
+        <a href="index.html#contact" id="cta-contact" class="btn">Contact Me</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-body">
+      <span class="close" id="modalClose">✕</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">GODMODE engaged.</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
