@@ -335,7 +335,8 @@ const AppController = {
       pendingSudo: null,
       tries: 0,
       sound: false,
-      motion: !prefersReduced.matches,
+      // Start with animations OFF regardless of user preference; user can toggle via header
+      motion: false,
       theme: document.documentElement.getAttribute('data-theme') || 'neon',
       konamiIdx: 0,
     };
@@ -783,9 +784,9 @@ const AppController = {
     /* ===== Toggles ===== */
     function toggleMotion(){
       state.motion = !state.motion;
-      if (motionToggle) {
-        motionToggle.textContent = state.motion ? 'motion' : 'motion*';
-      }
+      if (motionToggle) motionToggle.textContent = state.motion ? 'motion' : 'motion*';
+      // If there's only a single "switch" button (themeToggle), reuse it to control motion
+      if (themeToggle && !motionToggle) themeToggle.textContent = state.motion ? 'switch' : 'switch*';
       if(state.motion) {
         AppController.modules.matrixBackground.start();
       } else {
@@ -807,7 +808,8 @@ const AppController = {
     }
     motionToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleMotion(); });
     soundToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleSound(); });
-    themeToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleTheme(); });
+    // Use the header "switch" to start/stop animations instead of theme cycling
+    themeToggle?.addEventListener('click', (e)=>{ e.preventDefault(); toggleMotion(); });
 
     /* ===== Project data for modals ===== */
     const projectsData = {
@@ -869,9 +871,9 @@ const AppController = {
     function init(){
       updatePrompt();
       typeLoop();
-      if(state.motion) {
-        AppController.modules.matrixBackground.start();
-      }
+      // Do not auto-start animations; wait for user to toggle
+      if (themeToggle && !motionToggle) themeToggle.textContent = 'switch*';
+      if (motionToggle) motionToggle.textContent = 'motion*';
       window.addEventListener('resize', ()=>{ 
         // Resize is handled by the MatrixBackground module
       });
@@ -886,6 +888,7 @@ const AppController = {
     if(prefersReduced.matches){
       state.motion=false;
       if (motionToggle) motionToggle.textContent = 'motion*';
+      if (themeToggle && !motionToggle) themeToggle.textContent = 'switch*';
     }
 
     /* ===== Palette open/close ===== */

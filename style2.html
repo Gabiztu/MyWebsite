@@ -255,7 +255,8 @@ const state = {
   pendingSudo: null,
   tries: 0,
   sound: false,
-  motion: !prefersReduced.matches,
+  // Start with animations OFF; user can enable with header toggle
+  motion: false,
   theme: document.documentElement.getAttribute('data-theme') || 'neon',
   konamiIdx: 0,
 };
@@ -841,7 +842,8 @@ function showToast(msg){
 function init(){
   updatePrompt();
   typeLoop();
-  if(state.motion) startMatrix();
+  // Do not auto-start animations; wait for user toggle
+  motionToggle.textContent = 'motion*';
   window.addEventListener('resize', ()=>{ if(state.motion) resize(); });
   document.addEventListener('keydown', (e)=>{ if(palette.getAttribute('aria-hidden')==='false') return; if(e.key==='/'){ input.focus(); e.preventDefault(); } });
 }
