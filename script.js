@@ -389,11 +389,12 @@ const AppController = {
       '/': {type:'dir', children:['home','projects','about','readme.txt','etc']},
       '/home': {type:'dir', children:['guest']},
       '/home/guest': {type:'dir', children:['notes.txt','resume.txt','contacts.url']},
-      '/projects': {type:'dir', children:['hyperviz','fintech-core','realtime-dashboard','ml-playground']},
+      '/projects': {type:'dir', children:['hyperviz','fintech-core','realtime-dashboard','ml-playground','urzistaff']},
       '/projects/hyperviz': {type:'dir', children:['case.md','stack.txt','open.url']},
       '/projects/fintech-core': {type:'dir', children:['case.md','stack.txt','open.url']},
       '/projects/realtime-dashboard': {type:'dir', children:['case.md','stack.txt','open.url']},
       '/projects/ml-playground': {type:'dir', children:['case.md','stack.txt','open.url']},
+      '/projects/urzistaff': {type:'dir', children:['case.md','stack.txt','open.url']},
       '/about': {type:'dir', children:['skills.txt','toolchain.txt']},
       '/etc': {type:'dir', children:['motd','hosts','shadow'], hidden:true},
       '/vault': {type:'dir', children:['secrets.txt','keys.gpg','flag.txt'], hidden:true, restricted:true},
@@ -423,6 +424,9 @@ const AppController = {
       '/projects/ml-playground/case.md': {type:'file', content:`ML Playground\r\nProblem: Models felt opaque.\r\nSolution: Interactive visualizations to teach intuition.\r\nImpact: +63% demo-to-trial.`},
       '/projects/ml-playground/stack.txt': {type:'file', content:`WebGL, WASM, GPU.js`},
       '/projects/ml-playground/open.url': {type:'file', content:`https://brndy.vercel.app`},
+      '/projects/urzistaff/case.md': {type:'file', content:`Urzistaff — Short Description\r\nA Next.js 15 marketplace for vetted Virtual Assistants with listings, cart, reservations, crypto checkout, and an admin portal. Backed by Supabase for data/auth, with transactional email and optional PDF guide delivery.\r\n\r\nHighlights\r\n- Vetted VAs (IQ, English, typing)\r\n- SOP-first onboarding, ongoing support\r\n- Instant replacement guarantee\r\n\r\n`},
+      '/projects/urzistaff/stack.txt': {type:'file', content:`Tech Stack\r\nFramework: Next.js 15 (App Router), React 19\r\nHosting/CI: Vercel\r\nData/Auth: Supabase (Postgres, RLS) — tables: listings, carts, cart_items, orders, discount_codes, profiles; RPCs: reserve_listings, extend_hold\r\nPayments: NOWPayments invoices + IPN webhook (HMAC SHA-512)\r\nEmail: Brevo transactional\r\nDocs: pdf-lib personalized PDF guide\r\nSecurity: Admin allowlisted email + TOTP (otplib) + rate limiting\r\nUI/UX: CSS variables/themes, IntersectionObserver reveals, Canvas 2D constellation; @/* module alias\r\nAPI/Caching: Next.js route handlers, CDN headers (s-maxage, stale-while-revalidate)\r\nTooling: ESLint 9, eslint-config-next`},
+      '/projects/urzistaff/open.url': {type:'file', content:`https://www.urzistaff.com`},
 
       '/vault/secrets.txt': {type:'file', content:`FLAG{clients-love-cinematic-perf}`, restricted:true},
       '/vault/keys.gpg': {type:'file', content:`-----BEGIN PGP MESSAGE----- ***** -----END PGP MESSAGE-----`, restricted:true},
@@ -836,6 +840,12 @@ const AppController = {
         body:`<p><b>What it is:</b> Branding studio landing with bold typography and scroll-driven sections.</p>
               <p><b>Highlights:</b> "We build brands" hero, cases showcase, insights/blog, and strong contact CTA.</p>
               <p><b>Focus:</b> Brand strategy, identity, and web presence.</p>`
+      },
+      'urzistaff': {
+        title:'URZISTAFF',
+        body:`<p><b>What it is:</b> A Next.js 15 marketplace for vetted Virtual Assistants with listings, cart, reservations, crypto checkout, and an admin portal. Backed by Supabase for data/auth, with transactional email and optional PDF guide delivery.</p>
+              <p><b>Highlights:</b> VAs trained to follow SOPs; vetted for IQ/English/typing; instant replacement guarantee; ongoing support.</p>
+              <p><b>Tech:</b> Next.js 15 (App Router), React 19; Vercel; Supabase (Postgres, RLS) — tables: listings, carts, cart_items, orders, discount_codes, profiles; RPCs: reserve_listings, extend_hold; NOWPayments invoices + IPN webhook (HMAC SHA‑512); Brevo transactional email; pdf-lib (personalized guides); Admin allowlisted email + TOTP (otplib) + rate limiting; Next.js route handlers with CDN caching (s‑maxage, SWR); ESLint 9.</p>`
       },
     };
 
